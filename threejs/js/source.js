@@ -1,25 +1,68 @@
+//Requires
 const THREE = require('three');
-var renderer = new THREE.WebGLRenderer();
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
-
+//GLTF for 3D Models
+//const GLTFLoader = require('three-gltf-loader');
+const OrbitControls = require('three-orbitcontrols');
+const Armario = require('./armario');
+//Variables
+var renderer = new THREE.WebGLRenderer({
+	antialias : true
+});
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
 var scene = new THREE.Scene();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+controls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.set(0, 0, 100);
-camera.lookAt(0, 0, 0);
-var material = new THREE.LineBasicMaterial({
-	color: 0x0000ff
+var texture = new THREE.TextureLoader().load('floor.jpg', function (texture) {
+
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+	//texture.offset(0, 0);
+	texture.repeat.set(10,10);
 });
 
-var geometry = new THREE.Geometry();
-geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
-geometry.vertices.push(new THREE.Vector3(0, 10, 0));
-geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+var floor = new THREE.Mesh(
+	new THREE.PlaneGeometry(200, 200, 200, 200),
+	new THREE.MeshPhongMaterial({
+		map: texture,
+		side: THREE.FrontSide
+	})
+);
+floor.rotation.x -= Math.PI / 2;
+floor.receiveShadow=true;
+scene.add(floor);
 
-var line = new THREE.Line(geometry, material);
+function init() {
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+	renderer.gammaOutput = true;
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.BasicShadowMap;
+}
 
-scene.add(line);
-renderer.render(scene, camera);
+var angle = 0;
 
-camera.position.z = 5;
+function render() {
+	requestAnimationFrame(render);
+	renderer.render(scene, camera);
+	var h = Math.sqrt(directionalLight.position.x * directionalLight.position.x + directionalLight.position.z * directionalLight.position.z);
+	directionalLight.position.x = h * Math.cos(angle);
+	directionalLight.position.z = h * Math.sin(angle);
+	angle += 0.02;
+}
+
+var armario = new Armario();
+armario.position.y = 5;
+
+scene.add(armario);
+
+var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
+scene.add(ambientLight);
+camera.position.set(0, 20, 20);
+camera.lookAt(0, 0, 0);
+
+var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+directionalLight.castShadow = true;
+directionalLight.position.set(-5, 20, 10);
+directionalLight.shadow.bias = -0.001;
+scene.add(directionalLight);
+init();
+render();
