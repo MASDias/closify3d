@@ -97,7 +97,7 @@ function render() {
 	var h = Math.sqrt(directionalLight.position.x * directionalLight.position.x + directionalLight.position.z * directionalLight.position.z);
 	directionalLight.position.x = h * Math.cos(angle);
 	directionalLight.position.z = h * Math.sin(angle);
-	angle += 0.02;
+	angle += 0.003;
 }
 
 var armario = new Armario();
