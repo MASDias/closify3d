@@ -5,6 +5,7 @@ const THREE = require('three');
 const OrbitControls = require('three-orbitcontrols');
 const Armario = require('./armario');
 const Gaveta = require('./gaveta');
+const Porta = require('./porta');
 //Variables
 var renderer = new THREE.WebGLRenderer({
 	antialias: true
@@ -55,12 +56,23 @@ armario.position.y = 6;
 
 var gaveta = new Gaveta();
 armario.add(gaveta);
-//gaveta.position.x = 30;
+
+gaveta.position.x = 20;
 gaveta.position.y = 5;
 gaveta.position.z = 1;
 
+ var porta = new Porta();
+ armario.add(porta);
+
+ porta.position.y = 8.5;
+ porta.position.z = 1;
+
+
+
+
 scene.add(armario);
 scene.add(gaveta);
+scene.add(porta);
 
 var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
 scene.add(ambientLight);

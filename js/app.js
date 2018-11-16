@@ -48,7 +48,7 @@ class Armario extends THREE.Group {
 }
 
 module.exports = Armario;
-},{"three":5}],2:[function(require,module,exports){
+},{"three":6}],2:[function(require,module,exports){
 const THREE = require('three');
 
 class Gaveta extends THREE.Group {
@@ -106,7 +106,42 @@ class Gaveta extends THREE.Group {
 }
 
 module.exports = Gaveta;
-},{"three":5}],3:[function(require,module,exports){
+},{"three":6}],3:[function(require,module,exports){
+const THREE = require('three');
+
+class Porta extends THREE.Group {
+    constructor() {
+
+        super();
+
+        // Pega
+        var pegaGeometry = new THREE.CylinderGeometry(0.5,0.5,0.5,30);
+        var pegaMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood3.jpg'), side: THREE.DoubleSide });
+        var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
+        //pegaCylinder.rotateX(3.1415/2);
+        pegaCylinder.rotateZ(3.1415/2);
+        pegaCylinder.position.x = -2;
+        pegaCylinder.position.y = -1;
+        pegaCylinder.position.z = 0.5;
+
+        // Front
+        var frontGeometry = new THREE.BoxGeometry(10, 10, 1);
+        var frontMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood3.jpg'), side: THREE.DoubleSide });
+        var frontCube = new THREE.Mesh(frontGeometry, frontMaterial);
+        frontCube.castShadow = false;
+        frontCube.position.z = 4.5;
+        frontCube.position.y = -2.5;
+        frontCube.add(pegaCylinder);
+
+        // adding to the group
+        this.add(frontCube);
+
+    }
+
+}
+
+module.exports = Porta;
+},{"three":6}],4:[function(require,module,exports){
 //Requires
 const THREE = require('three');
 //GLTF for 3D Models
@@ -114,6 +149,7 @@ const THREE = require('three');
 const OrbitControls = require('three-orbitcontrols');
 const Armario = require('./armario');
 const Gaveta = require('./gaveta');
+const Porta = require('./porta');
 //Variables
 var renderer = new THREE.WebGLRenderer({
 	antialias: true
@@ -164,12 +200,23 @@ armario.position.y = 6;
 
 var gaveta = new Gaveta();
 armario.add(gaveta);
-//gaveta.position.x = 30;
+
+gaveta.position.x = 20;
 gaveta.position.y = 5;
 gaveta.position.z = 1;
 
+ var porta = new Porta();
+ armario.add(porta);
+
+ porta.position.y = 8.5;
+ porta.position.z = 1;
+
+
+
+
 scene.add(armario);
 scene.add(gaveta);
+scene.add(porta);
 
 var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
 scene.add(ambientLight);
@@ -183,7 +230,7 @@ directionalLight.shadow.bias = -0.001;
 scene.add(directionalLight);
 init();
 render();
-},{"./armario":1,"./gaveta":2,"three":5,"three-orbitcontrols":4}],4:[function(require,module,exports){
+},{"./armario":1,"./gaveta":2,"./porta":3,"three":6,"three-orbitcontrols":5}],5:[function(require,module,exports){
 /* three-orbitcontrols addendum */ var THREE = require('three');
 /**
  * @author qiao / https://github.com/qiao
@@ -1238,7 +1285,7 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 } );
 /* three-orbitcontrols addendum */ module.exports = exports.default = THREE.OrbitControls;
 
-},{"three":5}],5:[function(require,module,exports){
+},{"three":6}],6:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -49494,4 +49541,4 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 
 })));
 
-},{}]},{},[3]);
+},{}]},{},[4]);
