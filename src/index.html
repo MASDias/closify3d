@@ -1,9 +1,46 @@
 <html>
-  <head>
-    <title>Angular App</title>
-  </head>
-  <body>
-  <my-app>Loading...</my-app>
 
-  </body>
+<head>
+  <title>Angular App</title>
+  <link href="node_modules/@angular/material/prebuilt-themes/indigo-pink.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+</head>
+
+<body>
+    <div>
+        <mat-toolbar color="primary">
+          <span><mat-icon>mood</mat-icon></span>
+      
+          <span>Yay, Material in Angular 2!</span>
+      
+          <button mat-icon-button [mat-menu-trigger-for]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </mat-toolbar>
+        <mat-menu x-position="before" #menu="matMenu">
+          <button mat-menu-item>Option 1</button>
+          <button mat-menu-item>Option 2</button>
+        </mat-menu>
+      
+        <mat-card>
+          <button mat-button>All</button>
+          <button mat-raised-button>Of</button>
+          <button mat-raised-button color="primary">The</button>
+          <button mat-raised-button color="accent">Buttons</button>
+        </mat-card>
+      
+        <span class="done">
+          <button mat-fab>
+            <mat-icon>check circle</mat-icon>
+          </button>
+        </span>
+      </div>
+    
+    <button mat-icon-button [matMenuTriggerFor]="appMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>    
+  <my-app>Loading...</my-app>
+</body>
+
 </html>
