@@ -6,18 +6,6 @@ import {Component} from '@angular/core';
   template: `
     <my-scene></my-scene>
   `,
-  styles: [`
-    :host {
-      display: grid;
-      grid-template: auto 1fr / 1fr; 
-      height: 100vh;
-      width: 100vw;
-    }
-
-    my-controls,
-    my-scene {
-      width: 100%;
-    }
-  `],
+  styles: [],
 })
 export class AppComponent {}
