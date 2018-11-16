@@ -2,36 +2,37 @@
 const THREE = require('three')
 
 class Armario extends THREE.Group {
-    constructor() {
-
+    constructor(largura, altura, profundidade) {
         super();
 
+        this.espessura = 1;
+
         // Floor
-        var floorGeometry = new THREE.BoxGeometry(12, 1, 12);
+        var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
         var floorMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
-        floorCube.position.y = -5.5;
+        floorCube.position.y = -((altura-this.espessura)/2);
         // Ceiling
-        var ceilingGeometry = new THREE.BoxGeometry(12, 1, 12);
+        var ceilingGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
         var ceilingMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var ceilingCube = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
         //ceilingCube.castShadow=false;
-        ceilingCube.position.y = 5.5;
+        ceilingCube.position.y = ((altura-this.espessura)/2);
         // Left Wall
-        var leftWallGeometry = new THREE.BoxGeometry(1, 12, 12);
+        var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade);
         var leftWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
-        leftWallCube.position.x = -5.5;
+        leftWallCube.position.x = -((largura-this.espessura)/2);
         // Right Wall
-        var rightWallGeometry = new THREE.BoxGeometry(1, 12, 12);
+        var rightWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade);
         var rightWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
-        rightWallCube.position.x = 5.5;
+        rightWallCube.position.x = ((largura-this.espessura)/2);
         // Back Wall
-        var backWallGeometry = new THREE.BoxGeometry(12, 12, 1);
+        var backWallGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var backWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
-        backWallCube.position.z = -5.5;
+        backWallCube.position.z = -((profundidade-this.espessura)/2);;
 
         // adding to the group
         this.add(floorCube);
@@ -69,8 +70,8 @@ class Cabide extends THREE.Group {
         // Barra
         var barraGeometry = new THREE.CylinderGeometry(0.25,0.25,10,30);
         var barra = new THREE.Mesh(barraGeometry, pegaMaterial);
-        barra.position.z = 4.5;
-        barra.position.y = -2.5;
+        barra.position.z = 1;
+        barra.position.y = 2.5;
         barra.rotateZ(3.1415/2);
         barra.add(pegaCylinder);
         barra.add(pegaCylinder2);
@@ -232,23 +233,22 @@ function render() {
 	angle += 0.003;
 }
 
-var armario = new Armario();
+var armario = new Armario(12,12,12);
 armario.position.y = 6;
 
-var armario2 = new Armario();
-armario2.position.y = 6;
+var altura = 20;
+var armario2 = new Armario(12,altura,12);
+armario2.position.y = altura / 2;
 armario2.position.x = -15;
 
 var gaveta = new Gaveta();
 armario.add(gaveta);
-
 gaveta.position.x = -15;
 gaveta.position.y = 6;
 gaveta.position.z = 1;
 
  var porta = new Porta();
  armario.add(porta);
-
  porta.position.y = 8.5;
  porta.position.z = 1;
 
@@ -257,7 +257,6 @@ armario2.add(cabide);
  cabide.position.x = -15;
  cabide.position.y = 12;
  
-
 scene.add(armario2);
 scene.add(armario);
 scene.add(gaveta);

@@ -52,23 +52,22 @@ function render() {
 	angle += 0.003;
 }
 
-var armario = new Armario();
+var armario = new Armario(12,12,12);
 armario.position.y = 6;
 
-var armario2 = new Armario();
-armario2.position.y = 6;
+var altura = 20;
+var armario2 = new Armario(12,altura,12);
+armario2.position.y = altura / 2;
 armario2.position.x = -15;
 
 var gaveta = new Gaveta();
 armario.add(gaveta);
-
 gaveta.position.x = -15;
 gaveta.position.y = 6;
 gaveta.position.z = 1;
 
  var porta = new Porta();
  armario.add(porta);
-
  porta.position.y = 8.5;
  porta.position.z = 1;
 
@@ -77,7 +76,6 @@ armario2.add(cabide);
  cabide.position.x = -15;
  cabide.position.y = 12;
  
-
 scene.add(armario2);
 scene.add(armario);
 scene.add(gaveta);

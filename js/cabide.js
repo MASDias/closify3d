@@ -18,8 +18,8 @@ class Cabide extends THREE.Group {
         // Barra
         var barraGeometry = new THREE.CylinderGeometry(0.25,0.25,10,30);
         var barra = new THREE.Mesh(barraGeometry, pegaMaterial);
-        barra.position.z = 4.5;
-        barra.position.y = -2.5;
+        barra.position.z = 1;
+        barra.position.y = 2.5;
         barra.rotateZ(3.1415/2);
         barra.add(pegaCylinder);
         barra.add(pegaCylinder2);
