@@ -1,52 +1,54 @@
 const THREE = require('three');
 
 class Gaveta extends THREE.Group {
-    constructor() {
+    constructor(largura, altura, profundidade) {
 
         super();
 
+        this.espessura = 1;
+
         // Pega
-        var pegaGeometry = new THREE.CylinderGeometry(0.5,0.5,0.5,30);
+        var pegaGeometry = new THREE.CylinderGeometry(this.espessura / 2, this.espessura / 2, this.espessura / 2, 30);
         var pegaMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood3.jpg'), side: THREE.DoubleSide });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
-        pegaCylinder.rotateX(3.1415/2);
-        pegaCylinder.position.z = 0.5;
+        pegaCylinder.rotateX(3.1415 / 2);
+        pegaCylinder.position.z = this.espessura / 2;
 
         // Floor
-        var floorGeometry = new THREE.BoxGeometry(10, 1, 10);
+        var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade + this.espessura);
         var floorMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
-        floorCube.position.y = -4.5;
+        floorCube.position.y = -altura;
         // Front
-        var frontGeometry = new THREE.BoxGeometry(10, 4, 1);
+        var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var frontMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
-        var frontCube = new THREE.Mesh(frontGeometry, frontMaterial);
-        frontCube.castShadow = false;
-        frontCube.position.z = 4.5;
-        frontCube.position.y = -2.5;
-        frontCube.add(pegaCylinder);
+        var frontWall = new THREE.Mesh(frontGeometry, frontMaterial);
+        frontWall.castShadow = false;
+        frontWall.position.z = (profundidade) / 2;
+        frontWall.position.y = -(altura + this.espessura) / 2;
+        frontWall.add(pegaCylinder);
         // Left Wall
-        var leftWallGeometry = new THREE.BoxGeometry(1, 4, 10);
+        var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
         var leftWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
-        leftWallCube.position.x = -4.5;
-        leftWallCube.position.y = -2.5;
+        leftWallCube.position.x = -((largura - this.espessura) / 2);
+        leftWallCube.position.y = -((altura + this.espessura) / 2);
         // Right Wall
-        var rightWallGeometry = new THREE.BoxGeometry(1, 4, 10);
+        var rightWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
         var rightWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
-        rightWallCube.position.x = 4.5;
-        rightWallCube.position.y = -2.5;
+        rightWallCube.position.x = ((largura - this.espessura) / 2);
+        rightWallCube.position.y = -((altura + this.espessura) / 2);
         // Back Wall
-        var backWallGeometry = new THREE.BoxGeometry(10, 4, 1);
+        var backWallGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var backWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
-        backWallCube.position.z = -4.5;
-        backWallCube.position.y = -2.5;
+        backWallCube.position.z = -((profundidade) / 2 - this.espessura);
+        backWallCube.position.y = -((altura + this.espessura) / 2);
 
         // adding to the group
         this.add(floorCube);
-        this.add(frontCube);
+        this.add(frontWall);
         this.add(leftWallCube);
         this.add(rightWallCube);
         this.add(backWallCube);

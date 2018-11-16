@@ -60,11 +60,11 @@ var armario2 = new Armario(12,altura,12);
 armario2.position.y = altura / 2;
 armario2.position.x = -15;
 
-var gaveta = new Gaveta();
+var gaveta = new Gaveta(10, 4, 11);
 armario.add(gaveta);
 gaveta.position.x = -15;
-gaveta.position.y = 6;
-gaveta.position.z = 1;
+gaveta.position.y = 5.5;
+//gaveta.position.z = 1;
 
  var porta = new Porta();
  armario.add(porta);

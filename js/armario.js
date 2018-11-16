@@ -31,7 +31,7 @@ class Armario extends THREE.Group {
         var backWallGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var backWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
-        backWallCube.position.z = -((profundidade-this.espessura)/2);;
+        backWallCube.position.z = -((profundidade-this.espessura)/2);
 
         // adding to the group
         this.add(floorCube);
