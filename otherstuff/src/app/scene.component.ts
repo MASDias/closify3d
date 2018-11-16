@@ -60,7 +60,7 @@ export class SceneComponent implements OnInit {
   }
 
   initFloor(): void {
-    var texture = new THREE.TextureLoader().load('floor.jpg', function (texture) {
+    var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       //texture.offset(0, 0);
       texture.repeat.set(10, 10);

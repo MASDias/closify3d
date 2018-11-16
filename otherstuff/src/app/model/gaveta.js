@@ -9,7 +9,7 @@ export class Gaveta extends THREE.Group {
         // Pega
         var pegaGeometry = new THREE.CylinderGeometry(this.espessura / 2, this.espessura / 2, this.espessura / 2, 30);
         var pegaMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood3.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             side: THREE.DoubleSide
         });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
@@ -19,7 +19,7 @@ export class Gaveta extends THREE.Group {
         // Floor
         var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade + this.espessura);
         var floorMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood4.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });
         var floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -27,7 +27,7 @@ export class Gaveta extends THREE.Group {
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var frontMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood4.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });
         var frontWall = new THREE.Mesh(frontGeometry, frontMaterial);
@@ -38,7 +38,7 @@ export class Gaveta extends THREE.Group {
         // Left Wall
         var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
         var leftWallMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood4.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });
         var leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
@@ -47,7 +47,7 @@ export class Gaveta extends THREE.Group {
         // Right Wall
         var rightWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
         var rightWallMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood4.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });
         var rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
@@ -56,7 +56,7 @@ export class Gaveta extends THREE.Group {
         // Back Wall
         var backWallGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var backWallMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood4.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);

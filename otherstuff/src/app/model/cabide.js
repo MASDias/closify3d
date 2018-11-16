@@ -8,7 +8,7 @@ export class Cabide extends THREE.Group {
         // Pega1
         var pegaGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5, 30);
         var pegaMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('wood3.jpg'),
+            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             side: THREE.DoubleSide
         });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
