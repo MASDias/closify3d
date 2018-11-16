@@ -48,7 +48,43 @@ class Armario extends THREE.Group {
 }
 
 module.exports = Armario;
-},{"three":6}],2:[function(require,module,exports){
+},{"three":7}],2:[function(require,module,exports){
+const THREE = require('three');
+
+class Cabide extends THREE.Group {
+    constructor() {
+
+        super();
+
+        // Pega1
+        var pegaGeometry = new THREE.CylinderGeometry(0.5,0.5,0.5,30);
+        var pegaMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood3.jpg'), side: THREE.DoubleSide });
+        var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
+        pegaCylinder.position.y = 5;
+
+        // Pega2
+        var pegaCylinder2 = new THREE.Mesh(pegaGeometry, pegaMaterial);
+        pegaCylinder2.position.y = -5;
+
+        // Barra
+        var barraGeometry = new THREE.CylinderGeometry(0.25,0.25,10,30);
+        var barra = new THREE.Mesh(barraGeometry, pegaMaterial);
+        barra.position.z = 4.5;
+        barra.position.y = -2.5;
+        barra.rotateZ(3.1415/2);
+        barra.add(pegaCylinder);
+        barra.add(pegaCylinder2);
+        
+        barra.castShadow = false;
+        
+        // adding to the group
+        this.add(barra);
+    }
+
+}
+
+module.exports = Cabide;
+},{"three":7}],3:[function(require,module,exports){
 const THREE = require('three');
 
 class Gaveta extends THREE.Group {
@@ -58,19 +94,19 @@ class Gaveta extends THREE.Group {
 
         // Pega
         var pegaGeometry = new THREE.CylinderGeometry(0.5,0.5,0.5,30);
-        var pegaMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
+        var pegaMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood3.jpg'), side: THREE.DoubleSide });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
         pegaCylinder.rotateX(3.1415/2);
         pegaCylinder.position.z = 0.5;
 
         // Floor
         var floorGeometry = new THREE.BoxGeometry(10, 1, 10);
-        var floorMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
+        var floorMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
         floorCube.position.y = -4.5;
         // Front
         var frontGeometry = new THREE.BoxGeometry(10, 4, 1);
-        var frontMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
+        var frontMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var frontCube = new THREE.Mesh(frontGeometry, frontMaterial);
         frontCube.castShadow = false;
         frontCube.position.z = 4.5;
@@ -78,19 +114,19 @@ class Gaveta extends THREE.Group {
         frontCube.add(pegaCylinder);
         // Left Wall
         var leftWallGeometry = new THREE.BoxGeometry(1, 4, 10);
-        var leftWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
+        var leftWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
         leftWallCube.position.x = -4.5;
         leftWallCube.position.y = -2.5;
         // Right Wall
         var rightWallGeometry = new THREE.BoxGeometry(1, 4, 10);
-        var rightWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
+        var rightWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
         rightWallCube.position.x = 4.5;
         rightWallCube.position.y = -2.5;
         // Back Wall
         var backWallGeometry = new THREE.BoxGeometry(10, 4, 1);
-        var backWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
+        var backWallMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood4.jpg'), side: THREE.DoubleSide });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
         backWallCube.position.z = -4.5;
         backWallCube.position.y = -2.5;
@@ -106,7 +142,7 @@ class Gaveta extends THREE.Group {
 }
 
 module.exports = Gaveta;
-},{"three":6}],3:[function(require,module,exports){
+},{"three":7}],4:[function(require,module,exports){
 const THREE = require('three');
 
 class Porta extends THREE.Group {
@@ -141,7 +177,7 @@ class Porta extends THREE.Group {
 }
 
 module.exports = Porta;
-},{"three":6}],4:[function(require,module,exports){
+},{"three":7}],5:[function(require,module,exports){
 //Requires
 const THREE = require('three');
 //GLTF for 3D Models
@@ -150,6 +186,7 @@ const OrbitControls = require('three-orbitcontrols');
 const Armario = require('./armario');
 const Gaveta = require('./gaveta');
 const Porta = require('./porta');
+const Cabide = require('./cabide');
 //Variables
 var renderer = new THREE.WebGLRenderer({
 	antialias: true
@@ -198,11 +235,15 @@ function render() {
 var armario = new Armario();
 armario.position.y = 6;
 
+var armario2 = new Armario();
+armario2.position.y = 6;
+armario2.position.x = -15;
+
 var gaveta = new Gaveta();
 armario.add(gaveta);
 
-gaveta.position.x = 20;
-gaveta.position.y = 5;
+gaveta.position.x = -15;
+gaveta.position.y = 6;
 gaveta.position.z = 1;
 
  var porta = new Porta();
@@ -211,12 +252,17 @@ gaveta.position.z = 1;
  porta.position.y = 8.5;
  porta.position.z = 1;
 
+ var cabide = new Cabide();
+armario2.add(cabide);
+ cabide.position.x = -15;
+ cabide.position.y = 12;
+ 
 
-
-
+scene.add(armario2);
 scene.add(armario);
 scene.add(gaveta);
 scene.add(porta);
+scene.add(cabide);
 
 var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
 scene.add(ambientLight);
@@ -230,7 +276,7 @@ directionalLight.shadow.bias = -0.001;
 scene.add(directionalLight);
 init();
 render();
-},{"./armario":1,"./gaveta":2,"./porta":3,"three":6,"three-orbitcontrols":5}],5:[function(require,module,exports){
+},{"./armario":1,"./cabide":2,"./gaveta":3,"./porta":4,"three":7,"three-orbitcontrols":6}],6:[function(require,module,exports){
 /* three-orbitcontrols addendum */ var THREE = require('three');
 /**
  * @author qiao / https://github.com/qiao
@@ -1285,7 +1331,7 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 } );
 /* three-orbitcontrols addendum */ module.exports = exports.default = THREE.OrbitControls;
 
-},{"three":6}],6:[function(require,module,exports){
+},{"three":7}],7:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -49541,4 +49587,4 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 
 })));
 
-},{}]},{},[4]);
+},{}]},{},[5]);

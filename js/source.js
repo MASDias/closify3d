@@ -6,6 +6,7 @@ const OrbitControls = require('three-orbitcontrols');
 const Armario = require('./armario');
 const Gaveta = require('./gaveta');
 const Porta = require('./porta');
+const Cabide = require('./cabide');
 //Variables
 var renderer = new THREE.WebGLRenderer({
 	antialias: true
@@ -54,11 +55,15 @@ function render() {
 var armario = new Armario();
 armario.position.y = 6;
 
+var armario2 = new Armario();
+armario2.position.y = 6;
+armario2.position.x = -15;
+
 var gaveta = new Gaveta();
 armario.add(gaveta);
 
-gaveta.position.x = 20;
-gaveta.position.y = 5;
+gaveta.position.x = -15;
+gaveta.position.y = 6;
 gaveta.position.z = 1;
 
  var porta = new Porta();
@@ -67,12 +72,17 @@ gaveta.position.z = 1;
  porta.position.y = 8.5;
  porta.position.z = 1;
 
+ var cabide = new Cabide();
+armario2.add(cabide);
+ cabide.position.x = -15;
+ cabide.position.y = 12;
+ 
 
-
-
+scene.add(armario2);
 scene.add(armario);
 scene.add(gaveta);
 scene.add(porta);
+scene.add(cabide);
 
 var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
 scene.add(ambientLight);
