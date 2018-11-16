@@ -10,7 +10,7 @@ class Gaveta extends THREE.Group {
         var pegaMaterial = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('wood.png'), side: THREE.DoubleSide });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
         pegaCylinder.rotateX(3.1415/2);
-        pegaCylinder.position.z = 1.0;
+        pegaCylinder.position.z = 0.5;
 
         // Floor
         var floorGeometry = new THREE.BoxGeometry(10, 1, 10);

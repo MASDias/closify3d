@@ -51,11 +51,13 @@ function render() {
 }
 
 var armario = new Armario();
-armario.position.y = 5;
+armario.position.y = 6;
 
 var gaveta = new Gaveta();
-gaveta.position.x = 30;
+armario.add(gaveta);
+//gaveta.position.x = 30;
 gaveta.position.y = 5;
+gaveta.position.z = 1;
 
 scene.add(armario);
 scene.add(gaveta);
