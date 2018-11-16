@@ -1,0 +1,21 @@
+{
+  "name": "threejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "browserify": "^16.2.3",
+    "http-server": "^0.11.1",
+    "three": "^0.98.0",
+    "three-gltf-loader": "^1.98.0",
+    "three-orbitcontrols": "^2.96.3",
+    "three-trackballcontrols": "^0.0.7",
+    "watchify": "^3.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
