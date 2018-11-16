@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@angular/animations": "^7.0.4",
+    "@angular/cdk": "^7.0.4",
     "@angular/common": "5.1.2",
     "@angular/compiler": "5.1.2",
     "@angular/core": "5.1.2",
+    "@angular/material": "^7.0.4",
     "@angular/platform-browser": "5.1.2",
     "@angular/platform-browser-dynamic": "5.1.2",
     "@types/three": "^0.93.9",
