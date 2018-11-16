@@ -64,7 +64,7 @@ var gaveta = new Gaveta(10, 4, 11);
 armario.add(gaveta);
 gaveta.position.x = -15;
 gaveta.position.y = 5.5;
-//gaveta.position.z = 1;
+gaveta.position.z = 0.5;
 
  var porta = new Porta();
  armario.add(porta);
