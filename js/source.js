@@ -4,9 +4,10 @@ const THREE = require('three');
 //const GLTFLoader = require('three-gltf-loader');
 const OrbitControls = require('three-orbitcontrols');
 const Armario = require('./armario');
+const Gaveta = require('./gaveta');
 //Variables
 var renderer = new THREE.WebGLRenderer({
-	antialias : true
+	antialias: true
 });
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
 var scene = new THREE.Scene();
@@ -16,7 +17,7 @@ var texture = new THREE.TextureLoader().load('floor.jpg', function (texture) {
 
 	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 	//texture.offset(0, 0);
-	texture.repeat.set(10,10);
+	texture.repeat.set(10, 10);
 });
 
 var floor = new THREE.Mesh(
@@ -27,7 +28,7 @@ var floor = new THREE.Mesh(
 	})
 );
 floor.rotation.x -= Math.PI / 2;
-floor.receiveShadow=true;
+floor.receiveShadow = true;
 scene.add(floor);
 
 function init() {
@@ -52,7 +53,12 @@ function render() {
 var armario = new Armario();
 armario.position.y = 5;
 
+var gaveta = new Gaveta();
+gaveta.position.x = 30;
+gaveta.position.y = 5;
+
 scene.add(armario);
+scene.add(gaveta);
 
 var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
 scene.add(ambientLight);
