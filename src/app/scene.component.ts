@@ -107,7 +107,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(floor);
   }
   initRenderer(): void {
-    this.renderer.setSize(window.innerWidth*0.6, window.innerHeight*0.6);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
     document.addEventListener('mousedown', this.onMouseDown, false);
     this.renderer.gammaOutput = true;
