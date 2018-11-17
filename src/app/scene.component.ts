@@ -42,8 +42,9 @@ export class SceneComponent implements OnInit {
   private scene: THREE.Scene;
   private controls: OrbitControls;
   private raycaster: THREE.Raycaster;
-  static mouse : THREE.Vector2;
+  static mouse: THREE.Vector2;
   private INTERSECTED;
+  private componentes: THREE.Group[];
   constructor(private elRef: ElementRef, private config: ConfigService) { }
 
   ngOnInit() {
@@ -53,6 +54,7 @@ export class SceneComponent implements OnInit {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     SceneComponent.mouse = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster;
+    this.componentes = new Array();
 
     this.initFloor();
     this.initRenderer();
@@ -64,11 +66,15 @@ export class SceneComponent implements OnInit {
       this.raycaster.setFromCamera(SceneComponent.mouse, this.camera);
       var intersects = this.raycaster.intersectObjects(this.scene.children, true);
       if (intersects.length > 0) {
-        if (this.INTERSECTED != intersects[0].object) {
-          if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
-          this.INTERSECTED = intersects[0].object;
-          this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
-          this.INTERSECTED.material.emissive.setHex(0xff0000);
+        for (var i = 0; i < this.componentes.length; i++) {
+          if (intersects[0].object.parent === this.componentes[i]) {
+            if (this.INTERSECTED != intersects[0].object) {
+              if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
+              this.INTERSECTED = intersects[0].object;
+              this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
+              this.INTERSECTED.material.emissive.setHex(0xff0000);
+            }
+          }
         }
       } else {
         if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
@@ -96,7 +102,7 @@ export class SceneComponent implements OnInit {
     );
     floor.rotation.x -= Math.PI / 2;
     floor.receiveShadow = true;
-    //this.scene.add(floor);
+    this.scene.add(floor);
   }
   initRenderer(): void {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -144,6 +150,10 @@ export class SceneComponent implements OnInit {
     var prateleira = new Prateleira(10, 10);
     armario2.add(prateleira);
     prateleira.position.z = 1;
+
+    this.componentes.push(gaveta);
+    this.componentes.push(cabide);
+    this.componentes.push(prateleira);
 
     this.scene.add(armario2);
     this.scene.add(armario);
