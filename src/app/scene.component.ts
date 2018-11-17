@@ -107,6 +107,7 @@ export class SceneComponent implements OnInit {
 
     var prateleira = new Prateleira(10,10);
     armario2.add(prateleira);
+    prateleira.position.z = 1;
   
     this.scene.add(armario2);
     this.scene.add(armario);
