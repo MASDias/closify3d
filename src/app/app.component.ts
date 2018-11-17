@@ -1,11 +1,18 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
 
 @Component({
   selector: 'my-app',
   template: `
-    <my-scene></my-scene>
+    <div class="parent">
+      <my-scene></my-scene>
+      <div class="floating_button">
+      <app-floating-button></app-floating-button>
+      </div>
+    </div>
   `,
-  styles: [],
+  styleUrls: [
+    "./app.component.css"
+  ]
 })
-export class AppComponent {}
+export class AppComponent { }
