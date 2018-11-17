@@ -12,6 +12,7 @@
     "@angular/material": "^7.0.4",
     "@angular/platform-browser": "7.0.4",
     "@angular/platform-browser-dynamic": "7.0.4",
+    "@ng-bootstrap/ng-bootstrap": "^4.0.0",
     "@types/three": "^0.93.9",
     "angular": "^1.7.5",
     "core-js": "2.5.7",

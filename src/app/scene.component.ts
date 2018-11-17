@@ -41,20 +41,48 @@ export class SceneComponent implements OnInit {
   private camera: THREE.Camera;
   private scene: THREE.Scene;
   private controls: OrbitControls;
+  private raycaster: THREE.Raycaster;
+  static mouse: THREE.Vector2;
+  private INTERSECTED;
+  private componentes: THREE.Group[];
   constructor(private elRef: ElementRef, private config: ConfigService) { }
 
   ngOnInit() {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    
     this.scene = new THREE.Scene();
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    
+    SceneComponent.mouse = new THREE.Vector2();
+    this.raycaster = new THREE.Raycaster;
+    this.componentes = new Array();
 
     this.initFloor();
     this.initRenderer();
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.initObjects();
     this.initLights();
     const render = () => {
       requestAnimationFrame(render);
+
+      this.raycaster.setFromCamera(SceneComponent.mouse, this.camera);
+      var intersects = this.raycaster.intersectObjects(this.scene.children, true);
+      if (intersects.length > 0) {
+        for (var i = 0; i < this.componentes.length; i++) {
+          if (intersects[0].object.parent === this.componentes[i]) {
+            if (this.INTERSECTED != intersects[0].object) {
+              if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
+              this.INTERSECTED = intersects[0].object;
+              this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
+              this.INTERSECTED.material.emissive.setHex(0xff0000);
+            }
+          }
+        }
+      } else {
+        if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
+        this.INTERSECTED = null;
+      }
+
       this.renderer.render(this.scene, this.camera);
     }
     render();
@@ -81,6 +109,7 @@ export class SceneComponent implements OnInit {
   initRenderer(): void {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
+    document.addEventListener('mousedown', this.onMouseDown, false);
     this.renderer.gammaOutput = true;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.BasicShadowMap;
@@ -112,7 +141,7 @@ export class SceneComponent implements OnInit {
     armario2.add(gaveta);
     gaveta.position.y = -4.5;
 
-    var porta = new Porta(10,10);
+    var porta = new Porta(10, 10);
     armario.add(porta);
     porta.position.z = 1;
 
@@ -120,18 +149,21 @@ export class SceneComponent implements OnInit {
     armario2.add(cabide);
     cabide.position.y = 5;
 
-    var prateleira = new Prateleira(10,10);
+    var prateleira = new Prateleira(10, 10);
     armario2.add(prateleira);
     prateleira.position.z = 1;
-  
+
+    this.componentes.push(gaveta);
+    this.componentes.push(cabide);
+    this.componentes.push(prateleira);
+
     this.scene.add(armario2);
     this.scene.add(armario);
     this.scene.add(armario3);
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
-    this.camera.position.set(0, 20, 20);
-    this.camera.lookAt(0, 0, 0);
+   this.initCamera();
 
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
@@ -144,13 +176,23 @@ export class SceneComponent implements OnInit {
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.castShadow = true;
+    //directionalLight.castShadow = true;
     directionalLight.position.set(-5, 20, 10);
     directionalLight.shadow.bias = -0.001;
     this.scene.add(directionalLight);
   }
   initCamera(): void {
-    this.camera.position.set(0, 20, 20);
+    this.camera.position.set(0, 20, 55);
     this.camera.lookAt(0, 0, 0);
+  }
+  onMouseDown(event: MouseEvent): void {
+
+    event.preventDefault();
+
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    SceneComponent.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    SceneComponent.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
   }
 }
