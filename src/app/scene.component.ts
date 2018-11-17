@@ -8,6 +8,7 @@ import { Gaveta } from './model/gaveta';
 import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
 import { Divisao } from './model/divisao';
+import * as dat from 'dat.gui'
 interface Rotation {
   x: number;
   y: number;
@@ -45,21 +46,24 @@ export class SceneComponent implements OnInit {
   static mouse: THREE.Vector2;
   private INTERSECTED;
   private componentes: THREE.Group[];
+  private gui;
   constructor(private elRef: ElementRef, private config: ConfigService) { }
 
   ngOnInit() {
+    
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    
+
     this.scene = new THREE.Scene();
-    
+
     SceneComponent.mouse = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster;
     this.componentes = new Array();
-
-    this.initFloor();
-    this.initRenderer();
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.initFloor();
+    this.initRenderer();
+    this.initdatGUI();
+
     this.initObjects();
     this.initLights();
     const render = () => {
@@ -89,6 +93,13 @@ export class SceneComponent implements OnInit {
 
   }
 
+  initdatGUI():void {
+    this.gui = new dat.GUI();
+    var cam = this.gui.addFolder('Camera');
+    cam.add(this.camera.position,'x',0,100).listen();
+    cam.add(this.camera.position,'y',0,100).listen();
+    cam.add(this.camera.position,'z',0,100).listen();
+  }
   initFloor(): void {
     var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -163,7 +174,7 @@ export class SceneComponent implements OnInit {
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
-   this.initCamera();
+    this.initCamera();
 
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
