@@ -32,7 +32,7 @@ export class Gaveta extends THREE.Group {
         });
         var frontWall = new THREE.Mesh(frontGeometry, frontMaterial);
         frontWall.castShadow = false;
-        frontWall.position.z = (profundidade) / 2;
+        frontWall.position.z = (profundidade) / 2 + (this.espessura / 2);
         frontWall.position.y = -(altura + this.espessura) / 2;
         frontWall.add(pegaCylinder);
         // Left Wall
@@ -60,7 +60,7 @@ export class Gaveta extends THREE.Group {
             side: THREE.DoubleSide
         });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
-        backWallCube.position.z = -((profundidade) / 2);
+        backWallCube.position.z = -((profundidade) / 2) + (this.espessura / 2);
         backWallCube.position.y = -((altura + this.espessura) / 2);
 
         // adding to the group

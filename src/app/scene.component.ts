@@ -6,6 +6,7 @@ import * as OrbitControls from 'three-orbitcontrols';
 import * as THREE from 'three';
 import { Gaveta } from './model/gaveta';
 import { Porta } from './model/porta';
+import { Prateleira } from './model/prateleira';
 interface Rotation {
   x: number;
   y: number;
@@ -93,26 +94,22 @@ export class SceneComponent implements OnInit {
     armario2.position.x = -15;
 
     var gaveta = new Gaveta(10, 4, 10);
-    armario.add(gaveta);
-    gaveta.position.x = -15;
-    gaveta.position.y = 5.5;
-    //gaveta.position.z = 1;
+    armario2.add(gaveta);
+    gaveta.position.y = -4.5;
 
     var porta = new Porta(10,10);
     armario.add(porta);
-    porta.position.y = 8.5;
     porta.position.z = 1;
 
     var cabide = new Cabide(10);
     armario2.add(cabide);
-    cabide.position.x = -15;
-    cabide.position.y = 12;
+    cabide.position.y = 5;
 
+    var prateleira = new Prateleira(10,10);
+    armario2.add(prateleira);
+  
     this.scene.add(armario2);
     this.scene.add(armario);
-    //this.scene.add(gaveta);
-    this.scene.add(porta);
-    this.scene.add(cabide);
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);

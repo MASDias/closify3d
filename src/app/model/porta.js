@@ -26,7 +26,6 @@ export class Porta extends THREE.Group {
         var porta = new THREE.Mesh(frontGeometry, frontMaterial);
         porta.castShadow = false;
         porta.position.z = 4.5;
-        porta.position.y = -2.5;
         porta.add(pegaCylinder);
 
         // adding to the group
