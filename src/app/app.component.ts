@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
       <div class="floating_button">
       <app-floating-button></app-floating-button>
       </div>
+      <app-object-control></app-object-control>
     </div>
   `,
   styleUrls: [

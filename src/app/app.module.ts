@@ -9,7 +9,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { NgcFloatButtonModule } from 'ngc-float-button';
-import { FloatingButtonComponent } from './floating-button/floating-button.component'
+import { FloatingButtonComponent } from './floating-button/floating-button.component';
+import { ObjectControlComponent } from './object-control/object-control.component'
+import { MatSliderModule } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms'
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 @NgModule({
   imports: [
     BrowserModule,
@@ -18,7 +23,11 @@ import { FloatingButtonComponent } from './floating-button/floating-button.compo
     MatToolbarModule,
     MatCardModule,
     MatButtonModule,
-    NgcFloatButtonModule
+    NgcFloatButtonModule,
+    MatSliderModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [
     ConfigService,
@@ -27,6 +36,7 @@ import { FloatingButtonComponent } from './floating-button/floating-button.compo
     AppComponent,
     SceneComponent,
     FloatingButtonComponent,
+    ObjectControlComponent,
   ],
   bootstrap: [
     AppComponent,

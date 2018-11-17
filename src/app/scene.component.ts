@@ -49,15 +49,17 @@ export class SceneComponent implements OnInit {
 
   ngOnInit() {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    
     this.scene = new THREE.Scene();
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    
     SceneComponent.mouse = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster;
     this.componentes = new Array();
 
     this.initFloor();
     this.initRenderer();
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.initObjects();
     this.initLights();
     const render = () => {
@@ -105,7 +107,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(floor);
   }
   initRenderer(): void {
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(window.innerWidth*0.6, window.innerHeight*0.6);
     document.body.appendChild(this.renderer.domElement);
     document.addEventListener('mousedown', this.onMouseDown, false);
     this.renderer.gammaOutput = true;
@@ -161,8 +163,7 @@ export class SceneComponent implements OnInit {
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
-    this.camera.position.set(0, 20, 20);
-    this.camera.lookAt(0, 0, 0);
+   this.initCamera();
 
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
@@ -181,7 +182,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(directionalLight);
   }
   initCamera(): void {
-    this.camera.position.set(0, 20, 20);
+    this.camera.position.set(0, 20, 55);
     this.camera.lookAt(0, 0, 0);
   }
   onMouseDown(event: MouseEvent): void {
