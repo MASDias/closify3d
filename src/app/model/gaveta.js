@@ -24,6 +24,7 @@ export class Gaveta extends THREE.Group {
         });
         var floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
         floorCube.position.y = -altura;
+        floorCube.position.z = (this.espessura / 2);
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var frontMaterial = new THREE.MeshLambertMaterial({
@@ -34,6 +35,7 @@ export class Gaveta extends THREE.Group {
         frontWall.castShadow = false;
         frontWall.position.z = (profundidade) / 2 + (this.espessura / 2);
         frontWall.position.y = -(altura + this.espessura) / 2;
+        
         frontWall.add(pegaCylinder);
         // Left Wall
         var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
@@ -44,6 +46,7 @@ export class Gaveta extends THREE.Group {
         var leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
         leftWallCube.position.x = -((largura - this.espessura) / 2);
         leftWallCube.position.y = -((altura + this.espessura) / 2);
+        leftWallCube.position.z = (this.espessura / 2);
         // Right Wall
         var rightWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
         var rightWallMaterial = new THREE.MeshLambertMaterial({
@@ -53,6 +56,7 @@ export class Gaveta extends THREE.Group {
         var rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
         rightWallCube.position.x = ((largura - this.espessura) / 2);
         rightWallCube.position.y = -((altura + this.espessura) / 2);
+        rightWallCube.position.z = (this.espessura / 2);
         // Back Wall
         var backWallGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         var backWallMaterial = new THREE.MeshLambertMaterial({
