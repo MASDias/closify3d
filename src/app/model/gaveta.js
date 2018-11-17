@@ -60,7 +60,7 @@ export class Gaveta extends THREE.Group {
             side: THREE.DoubleSide
         });
         var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
-        backWallCube.position.z = -((profundidade) / 2 - this.espessura);
+        backWallCube.position.z = -((profundidade) / 2);
         backWallCube.position.y = -((altura + this.espessura) / 2);
 
         // adding to the group

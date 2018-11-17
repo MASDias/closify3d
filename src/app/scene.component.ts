@@ -92,18 +92,18 @@ export class SceneComponent implements OnInit {
     armario2.position.y = altura / 2;
     armario2.position.x = -15;
 
-    var gaveta = new Gaveta(10, 4, 11);
+    var gaveta = new Gaveta(10, 4, 10);
     armario.add(gaveta);
     gaveta.position.x = -15;
     gaveta.position.y = 5.5;
     //gaveta.position.z = 1;
 
-    var porta = new Porta();
+    var porta = new Porta(10,10);
     armario.add(porta);
     porta.position.y = 8.5;
     porta.position.z = 1;
 
-    var cabide = new Cabide();
+    var cabide = new Cabide(10);
     armario2.add(cabide);
     cabide.position.x = -15;
     cabide.position.y = 12;
