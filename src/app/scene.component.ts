@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { Gaveta } from './model/gaveta';
 import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
+import { Divisao } from './model/divisao';
 interface Rotation {
   x: number;
   y: number;
@@ -88,6 +89,20 @@ export class SceneComponent implements OnInit {
     var armario = new Armario(12, 12, 12);
     armario.position.y = 6;
 
+    var alturaArmario = 20;
+    var profundidadeArmario = 10;
+    var armario3 = new Armario(20, alturaArmario, profundidadeArmario);
+    armario3.position.y = 10;
+    armario3.position.x = 17;
+
+    var divisao = new Divisao(alturaArmario, profundidadeArmario, true);
+    divisao.position.x = -5;
+    var divisao2 = new Divisao(alturaArmario, profundidadeArmario, false);
+    divisao2.position.x = 5;
+    armario3.add(divisao);
+    armario3.add(divisao2);
+
+
     var altura = 20;
     var armario2 = new Armario(12, altura, 12);
     armario2.position.y = altura / 2;
@@ -107,9 +122,11 @@ export class SceneComponent implements OnInit {
 
     var prateleira = new Prateleira(10,10);
     armario2.add(prateleira);
+    prateleira.position.z = 1;
   
     this.scene.add(armario2);
     this.scene.add(armario);
+    this.scene.add(armario3);
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
