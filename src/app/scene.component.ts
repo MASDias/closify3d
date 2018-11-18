@@ -47,7 +47,13 @@ export class SceneComponent implements OnInit {
   private INTERSECTED;
   private componentes: THREE.Group[];
   private datgui;
-  private armarioSelecionado;
+  private objetoSelecionado;
+
+  //datgui
+  private datguiStructure: {
+    folderobjeto,
+    objectcounter
+  }
   private color: {
     color0
   }
@@ -67,7 +73,7 @@ export class SceneComponent implements OnInit {
     this.initFloor();
     this.initRenderer();
 
-
+    this.initdatGUI();
     this.initObjects();
     this.initLights();
     const render = () => {
@@ -75,6 +81,7 @@ export class SceneComponent implements OnInit {
 
       this.raycaster.setFromCamera(SceneComponent.mouse, this.camera);
       var intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
       if (intersects.length > 0) {
         for (var i = 0; i < this.componentes.length; i++) {
           if (intersects[0].object.parent === this.componentes[i]) {
@@ -93,35 +100,52 @@ export class SceneComponent implements OnInit {
 
       this.renderer.render(this.scene, this.camera);
     }
-    this.initdatGUI();
+
     render();
 
   }
 
   initdatGUI(): void {
+    this.datguiStructure = {
+      folderobjeto : "",
+      objectcounter: 0
+    }
     this.color = {
       color0: 0
     }
     this.datgui = new dat.GUI();
     var cam = this.datgui.addFolder('Camera');
-    cam.add(this.camera.position, 'x', 0, 100).listen();
-    cam.add(this.camera.position, 'y', 0, 100).listen();
-    cam.add(this.camera.position, 'z', 0, 100).listen();
+    cam.add(this.camera.position, 'x', -100, 100).listen();
+    cam.add(this.camera.position, 'y', -100, 100).listen();
+    cam.add(this.camera.position, 'z', -100, 100).listen();
 
-    var armario = this.datgui.addFolder('Armario');
-    armario.add(this.armarioSelecionado.position, 'x', 0, 100).listen();
-    armario.add(this.armarioSelecionado.position, 'y', 0, 100).listen();
-    armario.add(this.armarioSelecionado.position, 'z', 0, 100).listen();
+
+  }
+  initdatGuiObjeto(objeto) {
+    var folder;
+    folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
+    this.datguiStructure.objectcounter++;
+    var x = folder.add(objeto.position, 'x', -100, 100).listen();
+    x.onChange((value) => {
+      objeto.position.x = value;
+    });
+    var y = folder.add(objeto.position, 'y', -100, 100).listen();
+    y.onChange((value) => {
+      objeto.position.y = value;
+    });
+    var z = folder.add(objeto.position, 'z', -100, 100).listen();
+    z.onChange((value) => {
+      objeto.position.z = value;
+    });
 
     var color = Math.random() * 0xffffff;
-    armario.addColor(this.color, 'color0', color).onChange(() => {
-      this.armarioSelecionado.children.forEach(element => {
-        if(element.material != null)
+    folder.addColor(this.color, 'color0', color).onChange(() => {
+      objeto.children.forEach(element => {
+        if (element.material != null)
           element.material.color.setHex(this.dec2hex(this.color.color0));
       });
 
     });
-
   }
   initFloor(): void {
     var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
@@ -150,11 +174,13 @@ export class SceneComponent implements OnInit {
   }
   initObjects(): void {
     var armario = new Armario(12, 12, 12);
+    this.initdatGuiObjeto(armario);
     armario.position.y = 6;
-    this.armarioSelecionado = armario;
+    this.objetoSelecionado = armario;
     var alturaArmario = 20;
     var profundidadeArmario = 10;
     var armario3 = new Armario(20, alturaArmario, profundidadeArmario);
+    this.initdatGuiObjeto(armario3);
     armario3.position.y = 10;
     armario3.position.x = 17;
 
@@ -168,22 +194,27 @@ export class SceneComponent implements OnInit {
 
     var altura = 20;
     var armario2 = new Armario(12, altura, 12);
+    this.initdatGuiObjeto(armario2);
     armario2.position.y = altura / 2;
     armario2.position.x = -15;
 
     var gaveta = new Gaveta(10, 4, 10);
+    this.initdatGuiObjeto(gaveta);
     armario2.add(gaveta);
     gaveta.position.y = -4.5;
 
     var porta = new Porta(10, 10);
+    this.initdatGuiObjeto(porta);
     armario.add(porta);
     porta.position.z = 1;
 
     var cabide = new Cabide(10);
+    this.initdatGuiObjeto(cabide);
     armario2.add(cabide);
     cabide.position.y = 5;
 
     var prateleira = new Prateleira(10, 10);
+    this.initdatGuiObjeto(prateleira);
     armario2.add(prateleira);
     prateleira.position.z = 1;
 
