@@ -11,6 +11,7 @@ import { Divisao } from './model/divisao';
 import * as dat from 'dat.gui'
 import * as Controlkit from 'controlkit';
 import { CreateArmarioGUI } from './gui/CreateArmarioGUI'
+import * as Stats from 'stats.js'
 interface Rotation {
   x: number;
   y: number;
@@ -55,6 +56,8 @@ export class SceneComponent implements OnInit {
 
   private Armario;
 
+  private stats;
+
   //datgui
   private datguiStructure: {
     folderobjeto,
@@ -67,6 +70,13 @@ export class SceneComponent implements OnInit {
 
   ngOnInit() {
 
+    this.stats = new Stats();
+    this.stats.showPanel(0);
+    this.stats.dom.style.position = "fixed";
+    this.stats.dom.style.top = null;
+    this.stats.dom.style.bottom = 0;
+    document.body.appendChild(this.stats.dom);
+
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
 
     this.scene = new THREE.Scene();
@@ -77,6 +87,7 @@ export class SceneComponent implements OnInit {
     SceneComponent.componentes = new Array();
     SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
     this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
+
     this.initFloor();
     this.initRenderer();
     this.initControlKit();
@@ -84,10 +95,11 @@ export class SceneComponent implements OnInit {
     this.initObjects();
     this.initLights();
     const render = () => {
-      requestAnimationFrame(render);
-
+      this.stats.begin();
       this.controlkit.update();
       this.renderer.render(this.scene, SceneComponent.camera);
+      this.stats.end();
+      requestAnimationFrame(render);
     }
 
     render();
@@ -325,8 +337,8 @@ export class SceneComponent implements OnInit {
     this.scene.add(armario);
     this.initdatGuiObjeto(armario);
   }
-  adicionarComponente(componente){
-    if(this.Armario == null) return;
+  adicionarComponente(componente) {
+    if (this.Armario == null) return;
     this.Armario.add(componente);
   }
 }

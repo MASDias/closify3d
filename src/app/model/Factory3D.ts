@@ -23,7 +23,7 @@ export class Factory3D {
 
         switch (nomeObjeto) {
             case "Porta":
-                return new  Porta(largura, altura);
+                return new Porta(largura, altura);
                 break;
             case "Cabide":
                 return new Cabide(largura);
