@@ -16,6 +16,7 @@
     "@types/dat.gui": "^0.7.2",
     "@types/three": "^0.93.9",
     "angular": "^1.7.5",
+    "controlkit": "^0.1.9",
     "core-js": "2.5.7",
     "dat.gui": "^0.7.3",
     "ngc-float-button": "^1.2.1",
