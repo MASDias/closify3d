@@ -63,8 +63,8 @@ export class CreateArmarioGUI {
       .addSelect(this.components_structure, 'componentes', { label: "Selecionar", onChange: function(index){
         CreateArmarioGUI.instance.components_structure.selecionado = CreateArmarioGUI.instance.components_structure.componentes[index];
       }})
-      .addNumberInput(this.structureComponenteMedidas,"altura")
       .addNumberInput(this.structureComponenteMedidas,"largura")
+      .addNumberInput(this.structureComponenteMedidas,"altura")
       .addNumberInput(this.structureComponenteMedidas,"profundidade")
       .addButton('Criar', () => {
           
