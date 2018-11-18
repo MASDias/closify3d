@@ -6,9 +6,6 @@ import { Component } from '@angular/core';
   template: `
     <div class="parent">
       <my-scene></my-scene>
-      <div class="floating_button">
-      <app-floating-button></app-floating-button>
-      </div>
       <app-object-control></app-object-control>
     </div>
   `,

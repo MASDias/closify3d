@@ -9,6 +9,8 @@ import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
 import { Divisao } from './model/divisao';
 import * as dat from 'dat.gui'
+import * as Controlkit from 'controlkit';
+import { CreateArmarioGUI } from './gui/CreateArmarioGUI'
 interface Rotation {
   x: number;
   y: number;
@@ -48,6 +50,7 @@ export class SceneComponent implements OnInit {
   private componentes: THREE.Group[];
   private datgui;
   private objetoSelecionado;
+  private controlkit;
 
   //datgui
   private datguiStructure: {
@@ -72,7 +75,7 @@ export class SceneComponent implements OnInit {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.initFloor();
     this.initRenderer();
-
+    this.initControlKit();
     this.initdatGUI();
     this.initObjects();
     this.initLights();
@@ -97,17 +100,37 @@ export class SceneComponent implements OnInit {
         if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
         this.INTERSECTED = null;
       }
-
+      this.controlkit.update();
       this.renderer.render(this.scene, this.camera);
     }
 
     render();
 
   }
+  initControlKit(): any {
+    /*var obj = {
+      number: 0,
+      string: 'abc',
+      textures: ["example1", "example2", "example3"],
+      selectedTarget: "example1"
+    }
+    this.controlkit = new Controlkit();
+    this.controlkit.addPanel({
+      align: 'left',
+      position: [10, 10]
+    })
+      .addGroup()
+      .addSubGroup()
+      .addNumberInput(obj, 'number')
+      .addStringInput(obj, 'string')
+      .addSelect(obj, 'textures', { label: 'Select', selectTarget: 'selectedTarget' });
+    */
+    this.controlkit = new CreateArmarioGUI();
+  }
 
   initdatGUI(): void {
     this.datguiStructure = {
-      folderobjeto : "",
+      folderobjeto: "",
       objectcounter: 0
     }
     this.color = {
@@ -115,7 +138,7 @@ export class SceneComponent implements OnInit {
     }
     this.datgui = new dat.GUI();
     var cam = this.datgui.addFolder('Camera');
-    cam.add(this.camera.position, 'x', -100, 100).listen();
+    var x = cam.add(this.camera.position, 'x', -100, 100).listen();
     cam.add(this.camera.position, 'y', -100, 100).listen();
     cam.add(this.camera.position, 'z', -100, 100).listen();
 
@@ -147,6 +170,7 @@ export class SceneComponent implements OnInit {
 
     });
   }
+
   initFloor(): void {
     var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -207,6 +231,7 @@ export class SceneComponent implements OnInit {
     this.initdatGuiObjeto(porta);
     armario.add(porta);
     porta.position.z = 1;
+    this.componentes.push(porta);
 
     var cabide = new Cabide(10);
     this.initdatGuiObjeto(cabide);
@@ -252,7 +277,7 @@ export class SceneComponent implements OnInit {
   }
   onMouseDown(event: MouseEvent): void {
 
-    event.preventDefault();
+    //event.preventDefault();
 
     // calculate mouse position in normalized device coordinates
     // (-1 to +1) for both components
