@@ -1,5 +1,5 @@
 import * as Controlkit from 'controlkit';
-import {Armario} from '../model/armario'
+import { Armario } from '../model/armario'
 export class CreateArmarioGUI {
 
     public structure: {
@@ -10,19 +10,20 @@ export class CreateArmarioGUI {
 
     public controlkit;
 
-    public callback_create_armario;
+    public scene;
 
-    constructor(cb) {
+    constructor(scene, cb) {
         this.controlkit = new Controlkit();
         this.structure = {
-            largura: 1,
-            altura: 1,
-            profundidade: 1
+            largura: 15,
+            altura: 15,
+            profundidade: 15
         }
-        this.initPanel(cb);
+        this.scene = scene;
+        this.initPanel();
     }
 
-    initPanel(cb) {
+    initPanel() {
         var panel = this.controlkit.addPanel(
             {
                 label: 'Create Armario',
@@ -41,8 +42,8 @@ export class CreateArmarioGUI {
         armarioGroup.addNumberInput(this.structure, 'profundidade');
         armarioGroup.addButton('Create', () => {
 
-            var a:Armario = new Armario(this.structure.largura, this.structure.altura, this.structure.profundidade);
-            cb(a);
+            var a: Armario = new Armario(this.structure.largura, this.structure.altura, this.structure.profundidade);
+            this.scene.createArmarioAddScene(a);
 
         });
     }
