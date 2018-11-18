@@ -46,11 +46,15 @@ export class SceneComponent implements OnInit {
   static mouse: THREE.Vector2;
   private INTERSECTED;
   private componentes: THREE.Group[];
-  private gui;
+  private datgui;
+  private armarioSelecionado;
+  private color: {
+    color0
+  }
   constructor(private elRef: ElementRef, private config: ConfigService) { }
 
   ngOnInit() {
-    
+
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
 
     this.scene = new THREE.Scene();
@@ -62,7 +66,7 @@ export class SceneComponent implements OnInit {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.initFloor();
     this.initRenderer();
-    this.initdatGUI();
+
 
     this.initObjects();
     this.initLights();
@@ -89,16 +93,35 @@ export class SceneComponent implements OnInit {
 
       this.renderer.render(this.scene, this.camera);
     }
+    this.initdatGUI();
     render();
 
   }
 
-  initdatGUI():void {
-    this.gui = new dat.GUI();
-    var cam = this.gui.addFolder('Camera');
-    cam.add(this.camera.position,'x',0,100).listen();
-    cam.add(this.camera.position,'y',0,100).listen();
-    cam.add(this.camera.position,'z',0,100).listen();
+  initdatGUI(): void {
+    this.color = {
+      color0: 0
+    }
+    this.datgui = new dat.GUI();
+    var cam = this.datgui.addFolder('Camera');
+    cam.add(this.camera.position, 'x', 0, 100).listen();
+    cam.add(this.camera.position, 'y', 0, 100).listen();
+    cam.add(this.camera.position, 'z', 0, 100).listen();
+
+    var armario = this.datgui.addFolder('Armario');
+    armario.add(this.armarioSelecionado.position, 'x', 0, 100).listen();
+    armario.add(this.armarioSelecionado.position, 'y', 0, 100).listen();
+    armario.add(this.armarioSelecionado.position, 'z', 0, 100).listen();
+
+    var color = Math.random() * 0xffffff;
+    armario.addColor(this.color, 'color0', color).onChange(() => {
+      this.armarioSelecionado.children.forEach(element => {
+        if(element.material != null)
+          element.material.color.setHex(this.dec2hex(this.color.color0));
+      });
+
+    });
+
   }
   initFloor(): void {
     var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
@@ -128,7 +151,7 @@ export class SceneComponent implements OnInit {
   initObjects(): void {
     var armario = new Armario(12, 12, 12);
     armario.position.y = 6;
-
+    this.armarioSelecionado = armario;
     var alturaArmario = 20;
     var profundidadeArmario = 10;
     var armario3 = new Armario(20, alturaArmario, profundidadeArmario);
@@ -204,6 +227,17 @@ export class SceneComponent implements OnInit {
     // (-1 to +1) for both components
     SceneComponent.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     SceneComponent.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+  }
+  dec2hex(i) {
+    var result = "0x000000";
+    if (i >= 0 && i <= 15) { result = "0x00000" + i.toString(16); }
+    else if (i >= 16 && i <= 255) { result = "0x0000" + i.toString(16); }
+    else if (i >= 256 && i <= 4095) { result = "0x000" + i.toString(16); }
+    else if (i >= 4096 && i <= 65535) { result = "0x00" + i.toString(16); }
+    else if (i >= 65535 && i <= 1048575) { result = "0x0" + i.toString(16); }
+    else if (i >= 1048575) { result = '0x' + i.toString(16); }
+    if (result.length == 8) { return result; }
 
   }
 }
