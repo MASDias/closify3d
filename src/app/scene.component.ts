@@ -40,39 +40,39 @@ interface Rotateable {
 export class SceneComponent implements OnInit {
   private host: HTMLElement = this.elRef.nativeElement;
 
-  private renderer: THREE.WebGLRenderer;
-  private camera: THREE.Camera;
-  private scene: THREE.Scene;
-  private controls: OrbitControls;
+  static renderer: THREE.WebGLRenderer;
+  static camera: THREE.Camera;
+  static scene: THREE.Scene;
+  static controls: OrbitControls;
   private raycaster: THREE.Raycaster;
   static mouse: THREE.Vector2;
   private INTERSECTED;
   private componentes: THREE.Group[];
-  private datgui;
+  static datgui;
   private objetoSelecionado;
   private controlkit;
 
   //datgui
-  private datguiStructure: {
+  static datguiStructure: {
     folderobjeto,
     objectcounter
   }
-  private color: {
+  static color: {
     color0
   }
   constructor(private elRef: ElementRef, private config: ConfigService) { }
 
   ngOnInit() {
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    SceneComponent.renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    this.scene = new THREE.Scene();
+    SceneComponent.scene = new THREE.Scene();
 
     SceneComponent.mouse = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster;
     this.componentes = new Array();
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    SceneComponent.controls = new OrbitControls(SceneComponent.camera, SceneComponent.renderer.domElement);
     this.initFloor();
     this.initRenderer();
     this.initControlKit();
@@ -82,8 +82,8 @@ export class SceneComponent implements OnInit {
     const render = () => {
       requestAnimationFrame(render);
 
-      this.raycaster.setFromCamera(SceneComponent.mouse, this.camera);
-      var intersects = this.raycaster.intersectObjects(this.scene.children, true);
+      this.raycaster.setFromCamera(SceneComponent.mouse, SceneComponent.camera);
+      var intersects = this.raycaster.intersectObjects(SceneComponent.scene.children, true);
 
       if (intersects.length > 0) {
         for (var i = 0; i < this.componentes.length; i++) {
@@ -101,7 +101,7 @@ export class SceneComponent implements OnInit {
         this.INTERSECTED = null;
       }
       this.controlkit.update();
-      this.renderer.render(this.scene, this.camera);
+      SceneComponent.renderer.render(SceneComponent.scene, SceneComponent.camera);
     }
 
     render();
@@ -125,29 +125,29 @@ export class SceneComponent implements OnInit {
       .addStringInput(obj, 'string')
       .addSelect(obj, 'textures', { label: 'Select', selectTarget: 'selectedTarget' });
     */
-    this.controlkit = new CreateArmarioGUI();
+    this.controlkit = new CreateArmarioGUI(this.createArmarioAddScene);
   }
 
   initdatGUI(): void {
-    this.datguiStructure = {
+    SceneComponent.datguiStructure = {
       folderobjeto: "",
       objectcounter: 0
     }
-    this.color = {
+    SceneComponent.color = {
       color0: 0
     }
-    this.datgui = new dat.GUI();
-    var cam = this.datgui.addFolder('Camera');
-    var x = cam.add(this.camera.position, 'x', -100, 100).listen();
-    cam.add(this.camera.position, 'y', -100, 100).listen();
-    cam.add(this.camera.position, 'z', -100, 100).listen();
+    SceneComponent.datgui = new dat.GUI();
+    var cam = SceneComponent.datgui.addFolder('Camera');
+    var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
+    cam.add(SceneComponent.camera.position, 'y', -100, 100).listen();
+    cam.add(SceneComponent.camera.position, 'z', -100, 100).listen();
 
 
   }
-  initdatGuiObjeto(objeto) {
+  static initdatGuiObjeto(objeto) {
     var folder;
-    folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
-    this.datguiStructure.objectcounter++;
+    folder = SceneComponent.datgui.addFolder('Objeto ' + SceneComponent.datguiStructure.objectcounter);
+    SceneComponent.datguiStructure.objectcounter++;
     var x = folder.add(objeto.position, 'x', -100, 100).listen();
     x.onChange((value) => {
       objeto.position.x = value;
@@ -186,25 +186,25 @@ export class SceneComponent implements OnInit {
     );
     floor.rotation.x -= Math.PI / 2;
     floor.receiveShadow = true;
-    this.scene.add(floor);
+    SceneComponent.scene.add(floor);
   }
   initRenderer(): void {
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(this.renderer.domElement);
+    SceneComponent.renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(SceneComponent.renderer.domElement);
     document.addEventListener('mousedown', this.onMouseDown, false);
-    this.renderer.gammaOutput = true;
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.BasicShadowMap;
+    SceneComponent.renderer.gammaOutput = true;
+    SceneComponent.renderer.shadowMap.enabled = true;
+    SceneComponent.renderer.shadowMap.type = THREE.BasicShadowMap;
   }
   initObjects(): void {
     var armario = new Armario(12, 12, 12);
-    this.initdatGuiObjeto(armario);
+    SceneComponent.initdatGuiObjeto(armario);
     armario.position.y = 6;
     this.objetoSelecionado = armario;
     var alturaArmario = 20;
     var profundidadeArmario = 10;
     var armario3 = new Armario(20, alturaArmario, profundidadeArmario);
-    this.initdatGuiObjeto(armario3);
+    SceneComponent.initdatGuiObjeto(armario3);
     armario3.position.y = 10;
     armario3.position.x = 17;
 
@@ -218,28 +218,28 @@ export class SceneComponent implements OnInit {
 
     var altura = 20;
     var armario2 = new Armario(12, altura, 12);
-    this.initdatGuiObjeto(armario2);
+    SceneComponent.initdatGuiObjeto(armario2);
     armario2.position.y = altura / 2;
     armario2.position.x = -15;
 
     var gaveta = new Gaveta(10, 4, 10);
-    this.initdatGuiObjeto(gaveta);
+    SceneComponent.initdatGuiObjeto(gaveta);
     armario2.add(gaveta);
     gaveta.position.y = -4.5;
 
     var porta = new Porta(10, 10);
-    this.initdatGuiObjeto(porta);
+    SceneComponent.initdatGuiObjeto(porta);
     armario.add(porta);
     porta.position.z = 1;
     this.componentes.push(porta);
 
     var cabide = new Cabide(10);
-    this.initdatGuiObjeto(cabide);
+    SceneComponent.initdatGuiObjeto(cabide);
     armario2.add(cabide);
     cabide.position.y = 5;
 
     var prateleira = new Prateleira(10, 10);
-    this.initdatGuiObjeto(prateleira);
+    SceneComponent.initdatGuiObjeto(prateleira);
     armario2.add(prateleira);
     prateleira.position.z = 1;
 
@@ -247,33 +247,33 @@ export class SceneComponent implements OnInit {
     this.componentes.push(cabide);
     this.componentes.push(prateleira);
 
-    this.scene.add(armario2);
-    this.scene.add(armario);
-    this.scene.add(armario3);
+    SceneComponent.scene.add(armario2);
+    SceneComponent.scene.add(armario);
+    SceneComponent.scene.add(armario3);
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
-    this.scene.add(ambientLight);
+    SceneComponent.scene.add(ambientLight);
     this.initCamera();
 
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
     directionalLight.position.set(-5, 20, 10);
     directionalLight.shadow.bias = -0.001;
-    this.scene.add(directionalLight);
+    SceneComponent.scene.add(directionalLight);
   }
 
   initLights(): void {
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
-    this.scene.add(ambientLight);
+    SceneComponent.scene.add(ambientLight);
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     //directionalLight.castShadow = true;
     directionalLight.position.set(-5, 20, 10);
     directionalLight.shadow.bias = -0.001;
-    this.scene.add(directionalLight);
+    SceneComponent.scene.add(directionalLight);
   }
   initCamera(): void {
-    this.camera.position.set(0, 20, 55);
-    this.camera.lookAt(0, 0, 0);
+    SceneComponent.camera.position.set(0, 20, 55);
+    SceneComponent.camera.lookAt(0, 0, 0);
   }
   onMouseDown(event: MouseEvent): void {
 
@@ -285,7 +285,7 @@ export class SceneComponent implements OnInit {
     SceneComponent.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
   }
-  dec2hex(i) {
+  static dec2hex(i) {
     var result = "0x000000";
     if (i >= 0 && i <= 15) { result = "0x00000" + i.toString(16); }
     else if (i >= 16 && i <= 255) { result = "0x0000" + i.toString(16); }
@@ -295,5 +295,10 @@ export class SceneComponent implements OnInit {
     else if (i >= 1048575) { result = '0x' + i.toString(16); }
     if (result.length == 8) { return result; }
 
+  }
+
+  createArmarioAddScene(armario) {
+    SceneComponent.scene.add(armario);
+    SceneComponent.initdatGuiObjeto(armario);
   }
 }
