@@ -5,6 +5,7 @@ import { Gaveta } from './gaveta'
 import { Porta } from './porta'
 import { Prateleira } from './prateleira'
 import { Object3D } from 'three';
+import { FocoDeLuz } from './focoDeLuz'
 export class Factory3D {
 
     private static instance: Factory3D = null;
@@ -34,10 +35,13 @@ export class Factory3D {
             case "Prateleira":
                 return new Prateleira(largura, profundidade);
                 break;
+            case "FocoDeLuz":
+                return new FocoDeLuz(0, 0, 0);
             default:
                 return null;
         }
     }
+
 
 
 }

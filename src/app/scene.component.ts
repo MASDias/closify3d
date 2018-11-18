@@ -1,18 +1,17 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
+import * as dat from 'dat.gui';
+import * as Stats from 'stats.js';
+import * as THREE from 'three';
+import * as OrbitControls from 'three-orbitcontrols';
 import { ConfigService } from './config.service';
+import { CreateArmarioGUI } from './gui/CreateArmarioGUI';
 import { Armario } from './model/armario';
 import { Cabide } from './model/cabide';
-import * as OrbitControls from 'three-orbitcontrols';
-import * as THREE from 'three';
+import { Divisao } from './model/divisao';
+import { FocoDeLuz } from './model/focoDeLuz';
 import { Gaveta } from './model/gaveta';
 import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
-import { Divisao } from './model/divisao';
-import { FocoDeLuz } from './model/focoDeLuz';
-import * as dat from 'dat.gui'
-import * as Controlkit from 'controlkit';
-import { CreateArmarioGUI } from './gui/CreateArmarioGUI'
-import * as Stats from 'stats.js'
 interface Rotation {
   x: number;
   y: number;
@@ -65,7 +64,8 @@ export class SceneComponent implements OnInit {
     objectcounter
   }
   private color: {
-    color0
+    color0,
+    color1
   }
   constructor(private elRef: ElementRef, private config: ConfigService) { }
 
@@ -133,7 +133,8 @@ export class SceneComponent implements OnInit {
       objectcounter: 0
     }
     this.color = {
-      color0: 0
+      color0: 0,
+      color1: 0,
     }
     this.datgui = new dat.GUI();
     var cam = this.datgui.addFolder('Camera');
@@ -147,15 +148,15 @@ export class SceneComponent implements OnInit {
     var folder;
     folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
     this.datguiStructure.objectcounter++;
-    var x = folder.add(objeto.position, 'x', -100, 100).listen();
+    var x = folder.add(objeto.position, 'x', -100, 100).listen().step(0.1);
     x.onChange((value) => {
       objeto.position.x = value;
     });
-    var y = folder.add(objeto.position, 'y', -100, 100).listen();
+    var y = folder.add(objeto.position, 'y', -100, 100).listen().step(0.1);
     y.onChange((value) => {
       objeto.position.y = value;
     });
-    var z = folder.add(objeto.position, 'z', -100, 100).listen();
+    var z = folder.add(objeto.position, 'z', -100, 100).listen().step(0.1);
     z.onChange((value) => {
       objeto.position.z = value;
     });
@@ -168,6 +169,13 @@ export class SceneComponent implements OnInit {
       });
 
     });
+    if (objeto.isLight != null && objeto.isLight == true)
+      var color2 = Math.random() * 0xffffff;
+
+    folder.addColor(this.color, 'color1', color2).onChange(() => {
+      objeto.light.color.setHex(this.dec2hex(this.color.color0));
+    });
+
   }
 
   initFloor(): void {
@@ -199,10 +207,12 @@ export class SceneComponent implements OnInit {
     var armario = new Armario(12, 12, 12);
     this.initdatGuiObjeto(armario);
     armario.position.y = 6;
+    armario.position.z = -30;
     this.objetoSelecionado = armario;
     var alturaArmario = 20;
     var profundidadeArmario = 10;
     var armario3 = new Armario(20, alturaArmario, profundidadeArmario);
+
     this.initdatGuiObjeto(armario3);
     armario3.position.y = 10;
     armario3.position.x = 17;
@@ -213,6 +223,7 @@ export class SceneComponent implements OnInit {
     divisao2.position.x = 5;
     armario3.add(divisao);
     armario3.add(divisao2);
+    armario3.position.z = -30;
 
 
     var altura = 20;
@@ -227,6 +238,7 @@ export class SceneComponent implements OnInit {
     this.initdatGuiObjeto(gaveta);
     armario2.add(gaveta);
     gaveta.position.y = -4.5;
+    armario2.position.z = -30;
 
     var porta = new Porta(10, 10);
     porta.name = "Porta";
@@ -255,7 +267,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(armario);
     this.scene.add(armario3);
 
-    var focoDeLuz = new FocoDeLuz(armario2.position.x,armario2.position.y-1,armario2.position.z);
+    var focoDeLuz = new FocoDeLuz(armario2.position.x, armario2.position.y - 1, armario2.position.z);
     SceneComponent.componentes.push(focoDeLuz);
     this.scene.add(focoDeLuz);
 
@@ -263,7 +275,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(ambientLight);
     this.initCamera();
 
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.45);
     directionalLight.castShadow = true;
     directionalLight.position.set(-5, 20, 10);
     directionalLight.shadow.bias = -0.001;
@@ -271,7 +283,7 @@ export class SceneComponent implements OnInit {
   }
 
   initLights(): void {
-    var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
+    var ambientLight = new THREE.AmbientLight(0x404040, 0.10);
     this.scene.add(ambientLight);
     var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     //directionalLight.castShadow = true;
@@ -347,5 +359,6 @@ export class SceneComponent implements OnInit {
   adicionarComponente(componente) {
     if (this.Armario == null) return;
     this.Armario.add(componente);
+    this.initdatGuiObjeto(componente);
   }
 }

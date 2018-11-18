@@ -2,9 +2,3 @@
 .parent {
     position : relative;
 }
-
-.floating_button {
-    position: absolute;
-    bottom:-20;
-    left:20;
-}

@@ -13,7 +13,8 @@ export class Prateleira extends THREE.Group {
             side: THREE.DoubleSide
         });
         var prateleira = new THREE.Mesh(frontGeometry, frontMaterial);
-        prateleira.castShadow = false;
+        prateleira.castShadow = true;
+        prateleira.receiveShadow = true;
 
         // adding to the group
         this.add(prateleira);

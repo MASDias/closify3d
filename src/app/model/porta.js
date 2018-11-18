@@ -11,6 +11,7 @@ export class Porta extends THREE.Group {
 
         // Pega
         var pegaGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5, 30);
+       
         var material = new THREE.MeshLambertMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             side: THREE.DoubleSide
@@ -22,6 +23,7 @@ export class Porta extends THREE.Group {
 
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
+       
         var porta = new THREE.Mesh(frontGeometry, material);
         porta.castShadow = false;
         porta.position.z = 4.5;

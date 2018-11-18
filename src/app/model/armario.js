@@ -11,6 +11,7 @@ export class Armario extends THREE.Group {
         this.espessura = 1;
         // Floor
         var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
+     
         var material = new THREE.MeshLambertMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood.png'),
             side: THREE.DoubleSide
@@ -19,13 +20,14 @@ export class Armario extends THREE.Group {
         floorCube.position.y = -((altura - this.espessura) / 2);
         // Ceiling
         var ceilingGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
-
+      
         var ceilingCube = new THREE.Mesh(ceilingGeometry, material);
         //ceilingCube.castShadow=false;
+       
         ceilingCube.position.y = ((altura - this.espessura) / 2);
         // Left Wall
         var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade);
-
+      
         var leftWallCube = new THREE.Mesh(leftWallGeometry, material);
         leftWallCube.position.x = -((largura - this.espessura) / 2);
         // Right Wall
@@ -50,6 +52,9 @@ export class Armario extends THREE.Group {
             //element.receiveShadow=true;
         })
         this.translateY(altura / 2);
+        this.castShadow =true;         
+        this.receiveShadow =true; 
+            
     }
 
     animate() {

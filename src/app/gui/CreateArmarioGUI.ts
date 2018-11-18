@@ -16,16 +16,16 @@ export class CreateArmarioGUI {
     componentes;
     selecionado
   };
-  
+
   public select_target: {
     gaveta;
   };
   public controlkit;
-  public static instance ;
+  public static instance;
   public scene;
 
   constructor(scene, cb) {
-      CreateArmarioGUI.instance = this; 
+    CreateArmarioGUI.instance = this;
     this.controlkit = new Controlkit();
     this.structure = {
       largura: 15,
@@ -33,13 +33,13 @@ export class CreateArmarioGUI {
       profundidade: 15
     };
     this.components_structure = {
-      componentes: ["Porta", "Cabide", "Gaveta", "Prateleira"],
-      selecionado:'Porta'
+      componentes: ["Porta", "Cabide", "Gaveta", "Prateleira", "FocoDeLuz"],
+      selecionado: 'Porta'
     };
-    this.structureComponenteMedidas =  {
-        largura:15,
-        altura:15,
-        profundidade:15
+    this.structureComponenteMedidas = {
+      largura: 15,
+      altura: 15,
+      profundidade: 15
     };
     this.scene = scene;
     this.initPanel();
@@ -60,17 +60,19 @@ export class CreateArmarioGUI {
       .addGroup({
         label: "Criar Componente"
       })
-      .addSelect(this.components_structure, 'componentes', { label: "Selecionar", onChange: function(index){
-        CreateArmarioGUI.instance.components_structure.selecionado = CreateArmarioGUI.instance.components_structure.componentes[index];
-      }})
-      .addNumberInput(this.structureComponenteMedidas,"largura")
-      .addNumberInput(this.structureComponenteMedidas,"altura")
-      .addNumberInput(this.structureComponenteMedidas,"profundidade")
+      .addSelect(this.components_structure, 'componentes', {
+        label: "Selecionar", onChange: function (index) {
+          CreateArmarioGUI.instance.components_structure.selecionado = CreateArmarioGUI.instance.components_structure.componentes[index];
+        }
+      })
+      .addNumberInput(this.structureComponenteMedidas, "largura")
+      .addNumberInput(this.structureComponenteMedidas, "altura")
+      .addNumberInput(this.structureComponenteMedidas, "profundidade")
       .addButton('Criar', () => {
-          
-        var componente  = Factory3D.getInstance().create(this.components_structure.selecionado,this.structureComponenteMedidas.altura,this.structureComponenteMedidas.largura,this.structureComponenteMedidas.largura);
+
+        var componente = Factory3D.getInstance().create(this.components_structure.selecionado, this.structureComponenteMedidas.altura, this.structureComponenteMedidas.largura, this.structureComponenteMedidas.largura);
         this.scene.adicionarComponente(componente);
-    });
+      });
     var armarioGroup = panel.addGroup({
       label: "Create",
       enable: true
