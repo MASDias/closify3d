@@ -292,19 +292,21 @@ export class SceneComponent implements OnInit {
             } else {
               this.objetoSelecionado = SceneComponent.INTERSECTED;
             }
+          } else {
+            // Double click no objeto
+            this.objetoSelecionado.animate();
           }
         }
       }
     } else {
-      if (SceneComponent.INTERSECTED) {
+      if (SceneComponent.INTERSECTED || this.objetoSelecionado) {
         SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
+        this.objetoSelecionado.material.emissive.setHex(this.objetoSelecionado.currentHex);
+        SceneComponent.INTERSECTED = null;
+        this.objetoSelecionado = null;
       }
-      SceneComponent.INTERSECTED = null;
-      this.objetoSelecionado = null;
+
     }
-
-
-
     console.log(this.objetoSelecionado);
 
   }

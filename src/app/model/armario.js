@@ -52,4 +52,8 @@ export class Armario extends THREE.Group {
         this.translateY(altura / 2);
     }
 
+    animate() {
+
+    }
+
 }

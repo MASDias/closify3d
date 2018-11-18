@@ -36,4 +36,8 @@ export class Divisao extends THREE.Group {
 
     }
 
+    animate() {
+
+    }
+
 }

@@ -4,6 +4,9 @@ export class Porta extends THREE.Group {
 
         super();
 
+        this.largura = largura;
+        this.altura = altura;
+
         this.espessura = 1;
 
         // Pega
@@ -27,6 +30,9 @@ export class Porta extends THREE.Group {
         // adding to the group
         this.add(porta);
 
+    }
+
+    animate() {
     }
 
 }

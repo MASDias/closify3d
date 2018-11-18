@@ -35,4 +35,8 @@ export class Cabide extends THREE.Group {
         this.add(barra);
     }
 
+    animate() {
+
+    }
+
 }

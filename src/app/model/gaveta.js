@@ -56,4 +56,8 @@ export class Gaveta extends THREE.Group {
         this.add(backWallCube);
     }
 
+    animate() {
+        
+    }
+
 }
