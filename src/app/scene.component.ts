@@ -8,6 +8,7 @@ import { Gaveta } from './model/gaveta';
 import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
 import { Divisao } from './model/divisao';
+import { FocoDeLuz } from './model/focoDeLuz';
 import * as dat from 'dat.gui'
 import * as Controlkit from 'controlkit';
 import { CreateArmarioGUI } from './gui/CreateArmarioGUI'
@@ -254,6 +255,10 @@ export class SceneComponent implements OnInit {
     this.scene.add(armario);
     this.scene.add(armario3);
 
+    var focoDeLuz = new FocoDeLuz(armario2.position.x,armario2.position.y-1,armario2.position.z);
+    SceneComponent.componentes.push(focoDeLuz);
+    this.scene.add(focoDeLuz);
+
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
     this.initCamera();
@@ -304,19 +309,21 @@ export class SceneComponent implements OnInit {
             } else {
               this.objetoSelecionado = SceneComponent.INTERSECTED;
             }
+          } else {
+            // Double click no objeto
+            this.objetoSelecionado.animate();
           }
         }
       }
     } else {
-      if (SceneComponent.INTERSECTED) {
+      if (SceneComponent.INTERSECTED || this.objetoSelecionado) {
         SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
+        this.objetoSelecionado.material.emissive.setHex(this.objetoSelecionado.currentHex);
+        SceneComponent.INTERSECTED = null;
+        this.objetoSelecionado = null;
       }
-      SceneComponent.INTERSECTED = null;
-      this.objetoSelecionado = null;
+
     }
-
-
-
     console.log(this.objetoSelecionado);
 
   }

@@ -20,4 +20,8 @@ export class Prateleira extends THREE.Group {
 
     }
 
+    animate() {
+
+    }
+
 }
