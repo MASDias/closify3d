@@ -52,6 +52,8 @@ export class SceneComponent implements OnInit {
   private objetoSelecionado;
   private controlkit;
 
+  private Armario;
+
   //datgui
   private datguiStructure: {
     folderobjeto,
@@ -125,7 +127,7 @@ export class SceneComponent implements OnInit {
       .addStringInput(obj, 'string')
       .addSelect(obj, 'textures', { label: 'Select', selectTarget: 'selectedTarget' });
     */
-    this.controlkit = new CreateArmarioGUI();
+    this.controlkit = new CreateArmarioGUI(this,this.createArmarioAddScene);
   }
 
   initdatGUI(): void {
@@ -295,5 +297,11 @@ export class SceneComponent implements OnInit {
     else if (i >= 1048575) { result = '0x' + i.toString(16); }
     if (result.length == 8) { return result; }
 
+  }
+
+  createArmarioAddScene(armario){
+    this.Armario = armario;
+    this.scene.add(armario);
+    this.initdatGuiObjeto(armario);
   }
 }

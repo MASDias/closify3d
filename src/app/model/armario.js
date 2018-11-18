@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 
 export class Armario extends THREE.Group {
-
+    
     constructor(largura, altura, profundidade) {
         super();
+        this.largura = largura;
+        this.altura = altura;
+        this.profundidade=profundidade;
 
         this.espessura = 1;
         // Floor
@@ -58,6 +61,7 @@ export class Armario extends THREE.Group {
             element.castShadow = true;
             //element.receiveShadow=true;
         })
+        this.translateY(altura/2);
     }
 
 }

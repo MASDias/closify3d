@@ -1,5 +1,5 @@
 import * as Controlkit from 'controlkit';
-
+import { Armario } from '../model/armario'
 export class CreateArmarioGUI {
 
     public structure: {
@@ -10,13 +10,16 @@ export class CreateArmarioGUI {
 
     public controlkit;
 
-    constructor() {
+    public scene;
+
+    constructor(scene, cb) {
         this.controlkit = new Controlkit();
         this.structure = {
-            largura: 1,
-            altura: 1,
-            profundidade: 1
+            largura: 15,
+            altura: 15,
+            profundidade: 15
         }
+        this.scene = scene;
         this.initPanel();
     }
 
@@ -34,12 +37,17 @@ export class CreateArmarioGUI {
                 enable: true
             }
         )
-        var subGroup = armarioGroup.addSubGroup();
-        subGroup.addNumberInput(this.structure, 'largura');
-        subGroup.addNumberInput(this.structure, 'altura');
-        subGroup.addNumberInput(this.structure, 'profundidade');
+        armarioGroup.addNumberInput(this.structure, 'largura');
+        armarioGroup.addNumberInput(this.structure, 'altura');
+        armarioGroup.addNumberInput(this.structure, 'profundidade');
+        armarioGroup.addButton('Create', () => {
+
+            var a: Armario = new Armario(this.structure.largura, this.structure.altura, this.structure.profundidade);
+            this.scene.createArmarioAddScene(a);
+
+        });
     }
-    update(){
+    update() {
         this.controlkit.update();
     }
 }
