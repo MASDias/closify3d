@@ -41,13 +41,14 @@ export class SceneComponent implements OnInit {
   private host: HTMLElement = this.elRef.nativeElement;
 
   private renderer: THREE.WebGLRenderer;
-  private camera: THREE.Camera;
+  static camera: THREE.Camera;
   private scene: THREE.Scene;
   private controls: OrbitControls;
-  private raycaster: THREE.Raycaster;
+  //static raycaster: THREE.Raycaster;
   static mouse: THREE.Vector2;
-  private INTERSECTED;
-  private componentes: THREE.Group[];
+  static sceneRaycaster: THREE.Scene;
+  static INTERSECTED;
+  static componentes: THREE.Group[];
   private datgui;
   private objetoSelecionado;
   private controlkit;
@@ -69,12 +70,13 @@ export class SceneComponent implements OnInit {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
 
     this.scene = new THREE.Scene();
+    SceneComponent.sceneRaycaster = this.scene;
 
     SceneComponent.mouse = new THREE.Vector2();
-    this.raycaster = new THREE.Raycaster;
-    this.componentes = new Array();
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    //SceneComponent.raycaster = new THREE.Raycaster;
+    SceneComponent.componentes = new Array();
+    SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
     this.initFloor();
     this.initRenderer();
     this.initControlKit();
@@ -84,26 +86,8 @@ export class SceneComponent implements OnInit {
     const render = () => {
       requestAnimationFrame(render);
 
-      this.raycaster.setFromCamera(SceneComponent.mouse, this.camera);
-      var intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-      if (intersects.length > 0) {
-        for (var i = 0; i < this.componentes.length; i++) {
-          if (intersects[0].object.parent === this.componentes[i]) {
-            if (this.INTERSECTED != intersects[0].object) {
-              if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
-              this.INTERSECTED = intersects[0].object;
-              this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
-              this.INTERSECTED.material.emissive.setHex(0xff0000);
-            }
-          }
-        }
-      } else {
-        if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
-        this.INTERSECTED = null;
-      }
       this.controlkit.update();
-      this.renderer.render(this.scene, this.camera);
+      this.renderer.render(this.scene, SceneComponent.camera);
     }
 
     render();
@@ -127,7 +111,7 @@ export class SceneComponent implements OnInit {
       .addStringInput(obj, 'string')
       .addSelect(obj, 'textures', { label: 'Select', selectTarget: 'selectedTarget' });
     */
-    this.controlkit = new CreateArmarioGUI(this,this.createArmarioAddScene);
+    this.controlkit = new CreateArmarioGUI(this, this.createArmarioAddScene);
   }
 
   initdatGUI(): void {
@@ -140,9 +124,9 @@ export class SceneComponent implements OnInit {
     }
     this.datgui = new dat.GUI();
     var cam = this.datgui.addFolder('Camera');
-    var x = cam.add(this.camera.position, 'x', -100, 100).listen();
-    cam.add(this.camera.position, 'y', -100, 100).listen();
-    cam.add(this.camera.position, 'z', -100, 100).listen();
+    var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
+    cam.add(SceneComponent.camera.position, 'y', -100, 100).listen();
+    cam.add(SceneComponent.camera.position, 'z', -100, 100).listen();
 
 
   }
@@ -220,34 +204,39 @@ export class SceneComponent implements OnInit {
 
     var altura = 20;
     var armario2 = new Armario(12, altura, 12);
+    armario2.name = "Armario";
     this.initdatGuiObjeto(armario2);
     armario2.position.y = altura / 2;
     armario2.position.x = -15;
 
     var gaveta = new Gaveta(10, 4, 10);
+    gaveta.name = "Gaveta"
     this.initdatGuiObjeto(gaveta);
     armario2.add(gaveta);
     gaveta.position.y = -4.5;
 
     var porta = new Porta(10, 10);
+    porta.name = "Porta";
     this.initdatGuiObjeto(porta);
     armario.add(porta);
     porta.position.z = 1;
-    this.componentes.push(porta);
+    SceneComponent.componentes.push(porta);
 
     var cabide = new Cabide(10);
+    cabide.name = "Cabide";
     this.initdatGuiObjeto(cabide);
     armario2.add(cabide);
     cabide.position.y = 5;
 
     var prateleira = new Prateleira(10, 10);
+    prateleira.name = "Prateleira";
     this.initdatGuiObjeto(prateleira);
     armario2.add(prateleira);
     prateleira.position.z = 1;
 
-    this.componentes.push(gaveta);
-    this.componentes.push(cabide);
-    this.componentes.push(prateleira);
+    SceneComponent.componentes.push(gaveta);
+    SceneComponent.componentes.push(cabide);
+    SceneComponent.componentes.push(prateleira);
 
     this.scene.add(armario2);
     this.scene.add(armario);
@@ -274,17 +263,49 @@ export class SceneComponent implements OnInit {
     this.scene.add(directionalLight);
   }
   initCamera(): void {
-    this.camera.position.set(0, 20, 55);
-    this.camera.lookAt(0, 0, 0);
+    SceneComponent.camera.position.set(0, 20, 55);
+    SceneComponent.camera.lookAt(0, 0, 0);
   }
   onMouseDown(event: MouseEvent): void {
-
-    //event.preventDefault();
 
     // calculate mouse position in normalized device coordinates
     // (-1 to +1) for both components
     SceneComponent.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     SceneComponent.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+    var raycaster = new THREE.Raycaster();
+
+    raycaster.setFromCamera(SceneComponent.mouse, SceneComponent.camera)
+    var intersects = raycaster.intersectObjects(SceneComponent.sceneRaycaster.children, true);
+
+    if (intersects.length > 0) {
+      for (var i = 0; i < intersects.length; i++) {
+        if (intersects[0].object.parent === SceneComponent.componentes[i]) {
+          if (SceneComponent.INTERSECTED != intersects[0].object) {
+            if (SceneComponent.INTERSECTED) SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
+            SceneComponent.INTERSECTED = intersects[0].object;
+            SceneComponent.INTERSECTED.currentHex = SceneComponent.INTERSECTED.material.emissive.getHex();
+            SceneComponent.INTERSECTED.material.emissive.setHex(0xff0000);
+
+            if (SceneComponent.INTERSECTED.parent.children.length > 0) {
+              this.objetoSelecionado = SceneComponent.INTERSECTED.parent;
+            } else {
+              this.objetoSelecionado = SceneComponent.INTERSECTED;
+            }
+          }
+        }
+      }
+    } else {
+      if (SceneComponent.INTERSECTED) {
+        SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
+      }
+      SceneComponent.INTERSECTED = null;
+      this.objetoSelecionado = null;
+    }
+
+
+
+    console.log(this.objetoSelecionado);
 
   }
   dec2hex(i) {
@@ -299,7 +320,7 @@ export class SceneComponent implements OnInit {
 
   }
 
-  createArmarioAddScene(armario){
+  createArmarioAddScene(armario) {
     this.Armario = armario;
     this.scene.add(armario);
     this.initdatGuiObjeto(armario);

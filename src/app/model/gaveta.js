@@ -6,32 +6,25 @@ export class Gaveta extends THREE.Group {
 
         this.espessura = 1;
 
-        // Pega
-        var pegaGeometry = new THREE.CylinderGeometry(this.espessura / 2, this.espessura / 2, this.espessura / 2, 30);
-        var pegaMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
+        var material = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });
-        var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
+
+        // Pega
+        var pegaGeometry = new THREE.CylinderGeometry(this.espessura / 2, this.espessura / 2, this.espessura / 2, 30);
+        var pegaCylinder = new THREE.Mesh(pegaGeometry, material);
         pegaCylinder.rotateX(3.1415 / 2);
         pegaCylinder.position.z = this.espessura / 2;
 
         // Floor
         var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade + this.espessura);
-        var floorMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
-            side: THREE.DoubleSide
-        });
-        var floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
+        var floorCube = new THREE.Mesh(floorGeometry, material);
         floorCube.position.y = -altura;
         floorCube.position.z = (this.espessura / 2);
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
-        var frontMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
-            side: THREE.DoubleSide
-        });
-        var frontWall = new THREE.Mesh(frontGeometry, frontMaterial);
+        var frontWall = new THREE.Mesh(frontGeometry, material);
         frontWall.castShadow = false;
         frontWall.position.z = (profundidade) / 2 + (this.espessura / 2);
         frontWall.position.y = -(altura + this.espessura) / 2;
@@ -39,31 +32,19 @@ export class Gaveta extends THREE.Group {
         frontWall.add(pegaCylinder);
         // Left Wall
         var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
-        var leftWallMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
-            side: THREE.DoubleSide
-        });
-        var leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
+        var leftWallCube = new THREE.Mesh(leftWallGeometry, material);
         leftWallCube.position.x = -((largura - this.espessura) / 2);
         leftWallCube.position.y = -((altura + this.espessura) / 2);
         leftWallCube.position.z = (this.espessura / 2);
         // Right Wall
         var rightWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
-        var rightWallMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
-            side: THREE.DoubleSide
-        });
-        var rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
+        var rightWallCube = new THREE.Mesh(rightWallGeometry, material);
         rightWallCube.position.x = ((largura - this.espessura) / 2);
         rightWallCube.position.y = -((altura + this.espessura) / 2);
         rightWallCube.position.z = (this.espessura / 2);
         // Back Wall
         var backWallGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
-        var backWallMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
-            side: THREE.DoubleSide
-        });
-        var backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
+        var backWallCube = new THREE.Mesh(backWallGeometry, material);
         backWallCube.position.z = -((profundidade) / 2) + (this.espessura / 2);
         backWallCube.position.y = -((altura + this.espessura) / 2);
 
