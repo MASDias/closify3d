@@ -304,4 +304,8 @@ export class SceneComponent implements OnInit {
     this.scene.add(armario);
     this.initdatGuiObjeto(armario);
   }
+  adicionarComponente(componente){
+    if(this.Armario == null) return;
+    this.Armario.add(componente);
+  }
 }
