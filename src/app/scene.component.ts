@@ -85,8 +85,6 @@ export class SceneComponent implements OnInit {
       if (intersects.length > 0) {
         for (var i = 0; i < this.componentes.length; i++) {
           if (intersects[0].object.parent === this.componentes[i]) {
-            this.objetoSelecionado = this.componentes[i];
-            this.initdatGuiObjeto(this.objetoSelecionado);
             if (this.INTERSECTED != intersects[0].object) {
               if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
               this.INTERSECTED = intersects[0].object;
