@@ -105,7 +105,6 @@ export class SceneComponent implements OnInit {
       requestAnimationFrame(render);
     }
 
-    render();
 
     var lastFrameTime = new Date().getTime() / 1000;
     var totalGameTime = 0;
@@ -113,7 +112,7 @@ export class SceneComponent implements OnInit {
       //console.log(dt, t);
 
       SceneComponent.componentes.forEach(element => {
-        
+
       })
       setTimeout(function () {
         var currTime = new Date().getTime() / 1000;
@@ -126,6 +125,8 @@ export class SceneComponent implements OnInit {
       }, 0);
     }
 
+    render();
+    update(0,totalGameTime);
   }
   initControlKit(): any {
     /*var obj = {
