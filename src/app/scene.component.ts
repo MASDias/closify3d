@@ -126,7 +126,7 @@ export class SceneComponent implements OnInit {
     }
 
     render();
-    update(0,totalGameTime);
+    update(0, totalGameTime);
   }
   initControlKit(): any {
     /*var obj = {
