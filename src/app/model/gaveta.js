@@ -2,7 +2,14 @@ import * as THREE from 'three';
 export class Gaveta extends THREE.Group {
     constructor(largura, altura, profundidade) {
 
+
         super();
+
+        this.profundidade = profundidade;
+        this.largura = largura;
+        this.altura = altura;
+        this.playingAnimation = false;
+        this.reverseAnimation = false;
 
         this.espessura = 1;
 
@@ -28,7 +35,7 @@ export class Gaveta extends THREE.Group {
         frontWall.castShadow = false;
         frontWall.position.z = (profundidade) / 2 + (this.espessura / 2);
         frontWall.position.y = -(altura + this.espessura) / 2;
-        
+
         frontWall.add(pegaCylinder);
         // Left Wall
         var leftWallGeometry = new THREE.BoxGeometry(this.espessura, altura, profundidade + this.espessura);
@@ -56,8 +63,29 @@ export class Gaveta extends THREE.Group {
         this.add(backWallCube);
     }
 
-    animate() {
+    update(dt) {
+        var velocidade = 2.0;
         
+        if (this.playingAnimation) {
+            if (this.reverseAnimation) velocidade *= -1;
+            this.position.z = this.position.z + velocidade * dt;
+            if (this.position.z > this.profundidade) {
+                this.reverseAnimation = true;
+            } else {
+                if (this.position.z <= 0){
+                    this.position.z=0;
+                    this.reverseAnimation = false;
+                    this.playingAnimation = false;
+                }
+            }
+        }
+
+    }
+    animate() {
+        if (!this.playingAnimation) {
+            this.playingAnimation = true;
+        }
+
     }
 
 }

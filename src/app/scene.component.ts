@@ -14,6 +14,7 @@ import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { Scene } from 'three';
+import { Variable } from '@angular/compiler/src/render3/r3_ast';
 interface Rotation {
   x: number;
   y: number;
@@ -51,7 +52,7 @@ export class SceneComponent implements OnInit {
   static mouse: THREE.Vector2;
   static sceneRaycaster: THREE.Scene;
   static INTERSECTED;
-  static componentes: THREE.Group[];
+  static componentes;
   private datgui;
   private objetoSelecionado;
   private controlkit;
@@ -112,6 +113,9 @@ export class SceneComponent implements OnInit {
       //console.log(dt, t);
 
       SceneComponent.componentes.forEach(element => {
+        if (element.update != null) {
+          element.update(dt);
+        }
 
       })
       setTimeout(function () {
