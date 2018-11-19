@@ -12,6 +12,8 @@ import { FocoDeLuz } from './model/focoDeLuz';
 import { Gaveta } from './model/gaveta';
 import { Porta } from './model/porta';
 import { Prateleira } from './model/prateleira';
+import { componentRefresh } from '@angular/core/src/render3/instructions';
+import { Scene } from 'three';
 interface Rotation {
   x: number;
   y: number;
@@ -104,6 +106,25 @@ export class SceneComponent implements OnInit {
     }
 
     render();
+
+    var lastFrameTime = new Date().getTime() / 1000;
+    var totalGameTime = 0;
+    const update = (dt, t) => {
+      //console.log(dt, t);
+
+      SceneComponent.componentes.forEach(element => {
+        
+      })
+      setTimeout(function () {
+        var currTime = new Date().getTime() / 1000;
+        var dt = currTime - (lastFrameTime || currTime);
+        totalGameTime += dt;
+
+        update(dt, totalGameTime);
+
+        lastFrameTime = currTime;
+      }, 0);
+    }
 
   }
   initControlKit(): any {
