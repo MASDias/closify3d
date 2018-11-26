@@ -334,7 +334,7 @@ export class SceneComponent implements OnInit {
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
     this.scene.add(ambientLight);
     this.initCamera();
-
+    document.addEventListener("keydown", this.On)
 
   }
 
@@ -425,6 +425,12 @@ export class SceneComponent implements OnInit {
       SceneComponent.hasChanged = true;
     }
   }
+  onDocumentKeyDown(event) {
+    var keycode = event.which;
+    switch (keycode) {
+      case 68://CASE D)
+    }
+  }
 }
 
 function CollisionDetection() {
@@ -477,4 +483,6 @@ function CollisionDetection() {
       currentInstance.testElement(element);
     })
   }
+
+
 }
