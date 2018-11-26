@@ -68,6 +68,13 @@ export class SceneComponent implements OnInit {
 
   private stats;
 
+  /**
+   * Background Sound
+   * Raúl
+   */
+  private listener = new THREE.AudioListener();
+  private sound = new THREE.Audio(this.listener);
+
   //datgui
   private datguiStructure: {
     folderobjeto,
@@ -108,6 +115,7 @@ export class SceneComponent implements OnInit {
     this.initdatGUI();
     this.initObjects();
     this.initLights();
+    this.initMusic();
     const render = () => {
       this.stats.begin();
       this.controlkit.update();
@@ -151,6 +159,16 @@ export class SceneComponent implements OnInit {
     render();
     update(0, totalGameTime);
     updateColisions();
+  }
+  initMusic(): any {
+    var audioLoader = new THREE.AudioLoader();
+    var sound = this.sound;
+    audioLoader.load('assets/music/elevator_music.mp3', function (buffer) {
+      sound.setBuffer(buffer);
+      sound.setLoop(true);
+      sound.setVolume(0.15);
+      sound.play();
+    }, () => { }, () => { });
   }
   initControlKit(): any {
     this.controlkit = new CreateArmarioGUI(this, this.createArmarioAddScene);
@@ -348,6 +366,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(directionalLight);
   }
   initCamera(): void {
+    SceneComponent.camera.add(this.listener);
     SceneComponent.camera.position.set(0, 20, 55);
     SceneComponent.camera.lookAt(0, 0, 0);
   }
@@ -414,7 +433,8 @@ export class SceneComponent implements OnInit {
     this.Armario = armario;
     this.scene.add(armario);
     this.initdatGuiObjeto(armario, true);
-    SceneComponent.collisions.addElement(armario);
+    //SceneComponent.collisions.addElement(armario);
+    SceneComponent.collisions.armario = armario;
   }
   adicionarComponente(componente) {
     if (this.Armario == null) return;

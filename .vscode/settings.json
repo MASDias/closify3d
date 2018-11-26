@@ -1,3 +1,5 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "appService.defaultWebAppToDeploy": "/subscriptions/b1e6682a-fb93-4008-85ce-b6ea5e9998d6/resourceGroups/uberarmario/providers/Microsoft.Web/sites/uberarmario",
+    "appService.deploySubpath": "dist\\my-app"
 }

@@ -6201,7 +6201,7 @@ var CreateArmarioGUI = /** @class */ (function () {
         CreateArmarioGUI.instance = this;
         this.controlkit = new controlkit__WEBPACK_IMPORTED_MODULE_0__();
         this.structure = {
-            largura: 15,
+            largura: 25,
             altura: 15,
             profundidade: 15
         };
@@ -6242,7 +6242,7 @@ var CreateArmarioGUI = /** @class */ (function () {
             .addNumberInput(this.structureComponenteMedidas, "altura")
             .addNumberInput(this.structureComponenteMedidas, "profundidade")
             .addButton('Criar', function () {
-            var componente = _model_Factory3D__WEBPACK_IMPORTED_MODULE_2__["Factory3D"].getInstance().create(_this.components_structure.selecionado, _this.structureComponenteMedidas.altura, _this.structureComponenteMedidas.largura, _this.structureComponenteMedidas.largura);
+            var componente = _model_Factory3D__WEBPACK_IMPORTED_MODULE_2__["Factory3D"].getInstance().create(_this.components_structure.selecionado, _this.structureComponenteMedidas.largura, _this.structureComponenteMedidas.altura, _this.structureComponenteMedidas.profundidade);
             _this.scene.adicionarComponente(componente);
         });
         var armarioGroup = panel.addGroup({
@@ -6335,6 +6335,8 @@ var Factory3D = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Armario", function() { return Armario; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+/* harmony import */ var _porta__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./porta */ "./src/app/model/porta.js");
+
 
 
 class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
@@ -6344,11 +6346,12 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.largura = largura;
         this.altura = altura;
         this.profundidade = profundidade;
-
+        this.isArmario = true;
+        this.name = "Armario";
         this.espessura = 1;
         // Floor
         var floorGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, this.espessura, profundidade);
-     
+
         var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood.png'),
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
@@ -6357,14 +6360,14 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         floorCube.position.y = -((altura - this.espessura) / 2);
         // Ceiling
         var ceilingGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, this.espessura, profundidade);
-      
+
         var ceilingCube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](ceilingGeometry, material);
         //ceilingCube.castShadow=false;
-       
+
         ceilingCube.position.y = ((altura - this.espessura) / 2);
         // Left Wall
         var leftWallGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](this.espessura, altura, profundidade);
-      
+
         var leftWallCube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](leftWallGeometry, material);
         leftWallCube.position.x = -((largura - this.espessura) / 2);
         // Right Wall
@@ -6389,15 +6392,30 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
             //element.receiveShadow=true;
         })
         this.translateY(altura / 2);
-        this.castShadow =true;         
-        this.receiveShadow =true; 
-            
+        this.castShadow = true;
+        this.receiveShadow = true;
+
     }
 
     animate() {
 
     }
+    remove(object) {
+        console.log(object);
+        console.log(this.children);
+        var index = this.children.indexOf(object);
+        this.children.splice(index);
+    }
 
+    adicionarComponente(componente) {
+        var added = true;
+        if (componente instanceof _porta__WEBPACK_IMPORTED_MODULE_1__["Porta"]) {
+            if (componente.altura > this.altura - 2 * this.espessura) return false;
+            componente.position.z = this.profundidade / 2;
+        }
+        this.add(componente);
+        return added;
+    }
 }
 
 /***/ }),
@@ -6419,7 +6437,7 @@ class Cabide extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     constructor(comprimento) {
 
         super();
-
+        this.name = "Cabide";
         this.espessura = 1;
 
         // Pega1
@@ -6429,11 +6447,11 @@ class Cabide extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
         var pegaCylinder = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](pegaGeometry, pegaMaterial);
-        pegaCylinder.position.y = comprimento / 2;
+        pegaCylinder.position.y = (comprimento / 2) - 0.5 / 2;
 
         // Pega2
         var pegaCylinder2 = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](pegaGeometry, pegaMaterial);
-        pegaCylinder2.position.y = -(comprimento / 2);
+        pegaCylinder2.position.y = -(comprimento / 2) + 0.5 / 2;
 
         // Barra
         var barraGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"]((this.espessura / 4), (this.espessura / 4), comprimento, 30);
@@ -6474,7 +6492,7 @@ class Divisao extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     constructor(altura, profundidade, invisivel) {
 
         super();
-
+        this.name = "Divisao";
         this.espessura = 1;
 
         var divisionGeometry;
@@ -6498,7 +6516,7 @@ class Divisao extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
 
         var divisao = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](divisionGeometry, divisionMaterial);
         divisao.castShadow = false;
-        if(invisivel) divisao.rotateY(3.1415 / 2);
+        if (invisivel) divisao.rotateY(3.1415 / 2);
         divisao.position.z = this.espessura / 2;
 
 
@@ -6533,13 +6551,13 @@ class FocoDeLuz extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         super();
         this.isLight = true;
         this.espessura = 0.5;
-
+        this.name = "Foco de Luz";
         var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
             emissive: 0xffffff,
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
-        material.emissiveIntensity=0.4;
+        material.emissiveIntensity = 0.4;
 
         // Base da Luz
         var baseGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](this.espessura / 2, this.espessura, this.espessura / 2, 30);
@@ -6550,12 +6568,12 @@ class FocoDeLuz extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         baseCylinder.position.y = y;
         baseCylinder.position.z = z;
 
-        baseCylinder.castShadow=true;
+        baseCylinder.castShadow = false;
         //baseCylinder.receiveShadow=true;
 
         // FocoDeLuz
         var FocoDeLuz = new three__WEBPACK_IMPORTED_MODULE_0__["SpotLight"](0xFFFFAA, 1, 50, 3.1415 / 4);
-        FocoDeLuz.target.position.set(x,0,z);
+        FocoDeLuz.target.position.set(x, 0, z);
         FocoDeLuz.castShadow = true;
         this.light = FocoDeLuz;
         // adding to the group
@@ -6584,7 +6602,14 @@ __webpack_require__.r(__webpack_exports__);
 class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     constructor(largura, altura, profundidade) {
 
+
         super();
+        this.name = "Gaveta";
+        this.profundidade = profundidade;
+        this.largura = largura;
+        this.altura = altura;
+        this.playingAnimation = false;
+        this.reverseAnimation = false;
 
         this.espessura = 1;
 
@@ -6610,7 +6635,7 @@ class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         frontWall.castShadow = false;
         frontWall.position.z = (profundidade) / 2 + (this.espessura / 2);
         frontWall.position.y = -(altura + this.espessura) / 2;
-        
+
         frontWall.add(pegaCylinder);
         // Left Wall
         var leftWallGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](this.espessura, altura, profundidade + this.espessura);
@@ -6638,8 +6663,28 @@ class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.add(backWallCube);
     }
 
+    update(dt) {
+        var velocidade = 4.5;
+        if (this.playingAnimation) {
+            if (this.reverseAnimation) velocidade *= -1;
+            this.position.z = this.position.z + velocidade * dt;
+            if (this.position.z > this.profundidade) {
+                this.reverseAnimation = true;
+            } else {
+                if (this.position.z <= 0) {
+                    this.position.z = 0;
+                    this.reverseAnimation = false;
+                    this.playingAnimation = false;
+                }
+            }
+        }
+
+    }
     animate() {
-        
+        if (!this.playingAnimation) {
+            this.playingAnimation = true;
+        }
+
     }
 
 }
@@ -6658,44 +6703,98 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Porta", function() { return Porta; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 
+
 class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
+
     constructor(largura, altura) {
 
         super();
-
+        this.name = "Porta";
         this.largura = largura;
         this.altura = altura;
-
+        this.playingAnimation = false;
+        this.reverseAnimation = false;
+        this.opened = false;
+        this.tetha = 0;
         this.espessura = 1;
+        this.MAX_ROTATION = 110 * (Math.PI / 180);
+        this.ROTATION_STEP = (Math.PI / 2.0) / 3;
 
-        // Pega
-        var pegaGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.5, 0.5, 0.5, 30);
-       
+        // Front
+        var frontGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, altura, this.espessura);
+        //frontGeometry.translate(0, largura / 2, 0);
         var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
+        var porta = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](frontGeometry, material);
+
+        porta.castShadow = false;
+        porta.position.z = -this.espessura / 2;
+
+
+        // Pega
+        var pegaGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.5, 0.5, 0.5, 30);
+
+
         var pegaCylinder = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](pegaGeometry, material);
         pegaCylinder.rotateZ(3.1415 / 2);
         pegaCylinder.position.x = -(largura / 2) + this.espessura;
         pegaCylinder.position.z = this.espessura / 2;
-
-        // Front
-        var frontGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, altura, this.espessura);
-       
-        var porta = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](frontGeometry, material);
-        porta.castShadow = false;
-        porta.position.z = 4.5;
         porta.add(pegaCylinder);
 
-        // adding to the group
-        this.add(porta);
+        porta.position.x = -largura / 2;
 
+        this.position.x = largura / 2;
+        this.add(porta);
+    }
+
+    update(dt) {
+        var velocidade = 1.0;
+        if (this.playingAnimation) {
+            if (this.reverseAnimation) velocidade *= -1;
+            this.rotation.y += this.ROTATION_STEP * dt * velocidade;
+            if (this.rotation.y >= this.MAX_ROTATION) {
+                this.reverseAnimation = true;
+                this.playingAnimation = false;
+            }
+            if (this.rotation.y <= 0) {
+                this.playingAnimation = false;
+                this.reverseAnimation = false;
+                this.rotation.y = 0;
+            }
+        }
     }
 
     animate() {
-    }
+        if (!this.playingAnimation) {
+            this.playingAnimation = true;
 
+            //Sound effects
+            var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
+            var sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
+
+            if (!this.opened) {
+                var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+                audioLoader.load('assets/sounds/open_door_1.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setLoop(true);
+                    sound.setVolume(0.5);
+                    sound.play();
+                });
+                this.opened = true;
+            }else{
+                var audioLoader2 = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+                audioLoader.load('assets/sounds/close_door_1.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setLoop(true);
+                    sound.setVolume(0.5);
+                    sound.play();
+                });
+                this.opened = false;
+            }
+        }
+    }
 }
 
 /***/ }),
@@ -6716,7 +6815,7 @@ class Prateleira extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     constructor(largura, profundidade) {
 
         super();
-
+        this.name ="Prateleira"
         this.espessura = 1;
 
         // Prateleira
@@ -6855,10 +6954,18 @@ var SceneComponent = /** @class */ (function () {
         this.elRef = elRef;
         this.config = config;
         this.host = this.elRef.nativeElement;
+        /**
+         * Background Sound
+         * Raúl
+         */
+        this.listener = new three__WEBPACK_IMPORTED_MODULE_3__["AudioListener"]();
+        this.sound = new three__WEBPACK_IMPORTED_MODULE_3__["Audio"](this.listener);
+        SceneComponent_1.instance = this;
     }
     SceneComponent_1 = SceneComponent;
     SceneComponent.prototype.ngOnInit = function () {
         var _this = this;
+        SceneComponent_1.hasChanged = false;
         this.stats = new stats_js__WEBPACK_IMPORTED_MODULE_2__();
         this.stats.showPanel(0);
         this.stats.dom.style.position = "fixed";
@@ -6886,29 +6993,41 @@ var SceneComponent = /** @class */ (function () {
             _this.stats.end();
             requestAnimationFrame(render);
         };
+        var lastFrameTime = new Date().getTime() / 1000;
+        var totalGameTime = 0;
+        var update = function (dt, t) {
+            //console.log(dt, t);
+            SceneComponent_1.componentes.forEach(function (element) {
+                if (element.update != null) {
+                    element.update(dt);
+                }
+            });
+            setTimeout(function () {
+                var currTime = new Date().getTime() / 1000;
+                var dt = currTime - (lastFrameTime || currTime);
+                totalGameTime += dt;
+                update(dt, totalGameTime);
+                lastFrameTime = currTime;
+            }, 0);
+        };
+        var updateColisions = function () {
+            if (SceneComponent_1.hasChanged) {
+                SceneComponent_1.collisions.TestAll();
+                SceneComponent_1.hasChanged = false;
+            }
+            setTimeout(function () {
+                updateColisions();
+            }, 1000 / 2);
+        };
         render();
+        update(0, totalGameTime);
+        updateColisions();
     };
     SceneComponent.prototype.initControlKit = function () {
-        /*var obj = {
-          number: 0,
-          string: 'abc',
-          textures: ["example1", "example2", "example3"],
-          selectedTarget: "example1"
-        }
-        this.controlkit = new Controlkit();
-        this.controlkit.addPanel({
-          align: 'left',
-          position: [10, 10]
-        })
-          .addGroup()
-          .addSubGroup()
-          .addNumberInput(obj, 'number')
-          .addStringInput(obj, 'string')
-          .addSelect(obj, 'textures', { label: 'Select', selectTarget: 'selectedTarget' });
-        */
         this.controlkit = new _gui_CreateArmarioGUI__WEBPACK_IMPORTED_MODULE_6__["CreateArmarioGUI"](this, this.createArmarioAddScene);
     };
     SceneComponent.prototype.initdatGUI = function () {
+        this.datgui = new dat_gui__WEBPACK_IMPORTED_MODULE_1__["GUI"]();
         this.datguiStructure = {
             folderobjeto: "",
             objectcounter: 0
@@ -6917,28 +7036,31 @@ var SceneComponent = /** @class */ (function () {
             color0: 0,
             color1: 0,
         };
-        this.datgui = new dat_gui__WEBPACK_IMPORTED_MODULE_1__["GUI"]();
         var cam = this.datgui.addFolder('Camera');
         var x = cam.add(SceneComponent_1.camera.position, 'x', -100, 100).listen();
         cam.add(SceneComponent_1.camera.position, 'y', -100, 100).listen();
         cam.add(SceneComponent_1.camera.position, 'z', -100, 100).listen();
     };
-    SceneComponent.prototype.initdatGuiObjeto = function (objeto) {
+    SceneComponent.prototype.initdatGuiObjeto = function (objeto, isArmario) {
         var _this = this;
+        if (isArmario === void 0) { isArmario = false; }
         var folder;
-        folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
-        this.datguiStructure.objectcounter++;
-        var x = folder.add(objeto.position, 'x', -100, 100).listen().step(0.1);
+        folder = this.datgui.addFolder(objeto.name + " " + this.datguiStructure.objectcounter++);
+        var x = folder.add(objeto.position, 'x', -100, 100).step(0.5)
+            .listen();
         x.onChange(function (value) {
             objeto.position.x = value;
+            SceneComponent_1.hasChanged = true;
         });
         var y = folder.add(objeto.position, 'y', -100, 100).listen().step(0.1);
         y.onChange(function (value) {
             objeto.position.y = value;
+            SceneComponent_1.hasChanged = true;
         });
         var z = folder.add(objeto.position, 'z', -100, 100).listen().step(0.1);
         z.onChange(function (value) {
             objeto.position.z = value;
+            SceneComponent_1.hasChanged = true;
         });
         var color = Math.random() * 0xffffff;
         folder.addColor(this.color, 'color0', color).onChange(function () {
@@ -6950,8 +7072,21 @@ var SceneComponent = /** @class */ (function () {
         if (objeto.isLight != null && objeto.isLight == true)
             var color2 = Math.random() * 0xffffff;
         folder.addColor(this.color, 'color1', color2).onChange(function () {
-            objeto.light.color.setHex(_this.dec2hex(_this.color.color0));
+            objeto.light.color.setHex(_this.dec2hex(_this.color.color1));
         });
+        if (isArmario == false) {
+            var structure = {
+                remove: function remove() {
+                    var _datgui = SceneComponent_1.instance.datgui;
+                    var _objeto = objeto;
+                    var _folder = folder;
+                    var _armario = SceneComponent_1.instance.Armario;
+                    _armario.remove(_objeto);
+                    _datgui.removeFolder(_folder);
+                }
+            };
+            folder.add(structure, "remove");
+        }
     };
     SceneComponent.prototype.initFloor = function () {
         var texture = new three__WEBPACK_IMPORTED_MODULE_3__["TextureLoader"]().load('assets/texture/floor.jpg', function (texture) {
@@ -7004,13 +7139,14 @@ var SceneComponent = /** @class */ (function () {
         gaveta.name = "Gaveta";
         this.initdatGuiObjeto(gaveta);
         armario2.add(gaveta);
+        //gaveta.position.x = -0.5;  // Em colisão
         gaveta.position.y = -4.5;
         armario2.position.z = -30;
         var porta = new _model_porta__WEBPACK_IMPORTED_MODULE_12__["Porta"](10, 10);
         porta.name = "Porta";
         this.initdatGuiObjeto(porta);
-        armario.add(porta);
-        porta.position.z = 1;
+        armario.adicionarComponente(porta);
+        //porta.position.z = 1;
         SceneComponent_1.componentes.push(porta);
         var cabide = new _model_cabide__WEBPACK_IMPORTED_MODULE_8__["Cabide"](10);
         cabide.name = "Cabide";
@@ -7025,20 +7161,25 @@ var SceneComponent = /** @class */ (function () {
         SceneComponent_1.componentes.push(gaveta);
         SceneComponent_1.componentes.push(cabide);
         SceneComponent_1.componentes.push(prateleira);
+        var Collisions = new CollisionDetection();
+        Collisions.addElement(gaveta);
+        Collisions.addElement(prateleira);
+        Collisions.addElement(cabide);
+        Collisions.addElement(armario2);
+        Collisions.testElement(gaveta); // testar colisão da gaveta com outros
+        Collisions.testElement(cabide);
+        Collisions.testElement(prateleira);
         this.scene.add(armario2);
         this.scene.add(armario);
         this.scene.add(armario3);
         var focoDeLuz = new _model_focoDeLuz__WEBPACK_IMPORTED_MODULE_10__["FocoDeLuz"](armario2.position.x, armario2.position.y - 1, armario2.position.z);
         SceneComponent_1.componentes.push(focoDeLuz);
+        this.initdatGuiObjeto(focoDeLuz);
         this.scene.add(focoDeLuz);
         var ambientLight = new three__WEBPACK_IMPORTED_MODULE_3__["AmbientLight"](0x404040, 0.2);
         this.scene.add(ambientLight);
         this.initCamera();
-        var directionalLight = new three__WEBPACK_IMPORTED_MODULE_3__["DirectionalLight"](0xffffff, 0.45);
-        directionalLight.castShadow = true;
-        directionalLight.position.set(-5, 20, 10);
-        directionalLight.shadow.bias = -0.001;
-        this.scene.add(directionalLight);
+        //document.addEventListener("keydown", this.On)
     };
     SceneComponent.prototype.initLights = function () {
         var ambientLight = new three__WEBPACK_IMPORTED_MODULE_3__["AmbientLight"](0x404040, 0.10);
@@ -7050,6 +7191,7 @@ var SceneComponent = /** @class */ (function () {
         this.scene.add(directionalLight);
     };
     SceneComponent.prototype.initCamera = function () {
+        SceneComponent_1.camera.add(this.listener);
         SceneComponent_1.camera.position.set(0, 20, 55);
         SceneComponent_1.camera.lookAt(0, 0, 0);
     };
@@ -7092,7 +7234,8 @@ var SceneComponent = /** @class */ (function () {
                 this.objetoSelecionado = null;
             }
         }
-        console.log(this.objetoSelecionado);
+        if (this.objetoSelecionado != null)
+            console.log(this.objetoSelecionado);
     };
     SceneComponent.prototype.dec2hex = function (i) {
         var result = "0x000000";
@@ -7121,15 +7264,28 @@ var SceneComponent = /** @class */ (function () {
     SceneComponent.prototype.createArmarioAddScene = function (armario) {
         this.Armario = armario;
         this.scene.add(armario);
-        this.initdatGuiObjeto(armario);
+        this.initdatGuiObjeto(armario, true);
+        //SceneComponent.collisions.addElement(armario);
+        SceneComponent_1.collisions.armario = armario;
     };
     SceneComponent.prototype.adicionarComponente = function (componente) {
         if (this.Armario == null)
             return;
-        this.Armario.add(componente);
-        this.initdatGuiObjeto(componente);
+        if (this.Armario.adicionarComponente(componente)) {
+            this.initdatGuiObjeto(componente, false);
+            SceneComponent_1.componentes.push(componente);
+            SceneComponent_1.collisions.addElement(componente);
+            SceneComponent_1.hasChanged = true;
+        }
+    };
+    SceneComponent.prototype.onDocumentKeyDown = function (event) {
+        var keycode = event.which;
+        switch (keycode) {
+            case 68: //CASE D)
+        }
     };
     var SceneComponent_1;
+    SceneComponent.collisions = new CollisionDetection();
     SceneComponent = SceneComponent_1 = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'my-scene',
@@ -7141,6 +7297,54 @@ var SceneComponent = /** @class */ (function () {
     return SceneComponent;
 }());
 
+function CollisionDetection() {
+    var caster = new three__WEBPACK_IMPORTED_MODULE_3__["Raycaster"]();
+    var rays = [];
+    var elements = [];
+    var map = {};
+    var h;
+    rays.push(new three__WEBPACK_IMPORTED_MODULE_3__["Vector3"](0, -1, 0));
+    rays.push(new three__WEBPACK_IMPORTED_MODULE_3__["Vector3"](0, 1, 0));
+    rays.push(new three__WEBPACK_IMPORTED_MODULE_3__["Vector3"](1, 0, 0));
+    rays.push(new three__WEBPACK_IMPORTED_MODULE_3__["Vector3"](-1, 0, 0));
+    rays.push(new three__WEBPACK_IMPORTED_MODULE_3__["Vector3"](0, 0, -1));
+    rays.push(new three__WEBPACK_IMPORTED_MODULE_3__["Vector3"](0, 0, 1));
+    this.testElement = function (element) {
+        for (var i = 0; i < rays.length; i++) {
+            caster.set(element.position, rays[i]);
+            var hits = caster.intersectObjects(elements, true);
+            for (var k = 0; k < hits.length; k++) {
+                if (hits[k].distance === 0) {
+                    console.log("hit", hits[k]);
+                    h = hits[k].object;
+                    var e = element.object;
+                    console.log("elemento", element);
+                    h.material.emissive.setHex(0x0000ff);
+                }
+            }
+        }
+    };
+    this.addRay = function (ray) {
+        rays.push(ray.normalize());
+    };
+    this.addElement = function (element) {
+        elements.push(element);
+        if (element.material != null) {
+            map[element] = element.material.getHex();
+        }
+    };
+    this.addArray = function (arrays) {
+        elements = arrays;
+    };
+    this.TestAll = function () {
+        if (elements == [])
+            return;
+        var currentInstance = this;
+        elements.forEach(function (element) {
+            currentInstance.testElement(element);
+        });
+    };
+}
 
 
 /***/ }),
