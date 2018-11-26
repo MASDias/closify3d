@@ -53,6 +53,8 @@ export class SceneComponent implements OnInit {
   static sceneRaycaster: THREE.Scene;
   static INTERSECTED;
   static componentes;
+
+  static instance;
   private datgui;
   private objetoSelecionado;
   private controlkit;
@@ -70,7 +72,9 @@ export class SceneComponent implements OnInit {
     color0,
     color1
   }
-  constructor(private elRef: ElementRef, private config: ConfigService) { }
+  constructor(private elRef: ElementRef, private config: ConfigService) {
+    SceneComponent.instance = this;
+  }
 
   ngOnInit() {
 
@@ -133,27 +137,11 @@ export class SceneComponent implements OnInit {
     update(0, totalGameTime);
   }
   initControlKit(): any {
-    /*var obj = {
-      number: 0,
-      string: 'abc',
-      textures: ["example1", "example2", "example3"],
-      selectedTarget: "example1"
-    }
-    this.controlkit = new Controlkit();
-    this.controlkit.addPanel({
-      align: 'left',
-      position: [10, 10]
-    })
-      .addGroup()
-      .addSubGroup()
-      .addNumberInput(obj, 'number')
-      .addStringInput(obj, 'string')
-      .addSelect(obj, 'textures', { label: 'Select', selectTarget: 'selectedTarget' });
-    */
     this.controlkit = new CreateArmarioGUI(this, this.createArmarioAddScene);
   }
 
   initdatGUI(): void {
+    this.datgui = new dat.GUI();
     this.datguiStructure = {
       folderobjeto: "",
       objectcounter: 0
@@ -162,7 +150,6 @@ export class SceneComponent implements OnInit {
       color0: 0,
       color1: 0,
     }
-    this.datgui = new dat.GUI();
     var cam = this.datgui.addFolder('Camera');
     var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
     cam.add(SceneComponent.camera.position, 'y', -100, 100).listen();
@@ -170,11 +157,11 @@ export class SceneComponent implements OnInit {
 
 
   }
-  initdatGuiObjeto(objeto) {
+  initdatGuiObjeto(objeto, isArmario = false) {
     var folder;
     folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
     this.datguiStructure.objectcounter++;
-    var x = folder.add(objeto.position, 'x', -100, 100).listen().step(0.1);
+    var x = folder.add(objeto.position, 'x', -100, 100).step(0.5).listen();
     x.onChange((value) => {
       objeto.position.x = value;
     });
@@ -198,12 +185,26 @@ export class SceneComponent implements OnInit {
     if (objeto.isLight != null && objeto.isLight == true)
       var color2 = Math.random() * 0xffffff;
 
+
     folder.addColor(this.color, 'color1', color2).onChange(() => {
-      objeto.light.color.setHex(this.dec2hex(this.color.color0));
+      objeto.light.color.setHex(this.dec2hex(this.color.color1));
     });
+    if (isArmario == false) {
+      var structure = {
+        remove:
+          function remove() {
+            var _datgui = SceneComponent.instance.datgui;
+            var _objeto = objeto;
+            var _folder = folder;
+            var _armario = SceneComponent.instance.Armario;
+            _armario.remove(_objeto);
+            _datgui.removeFolder(_folder);
 
+          }
+      }
+      folder.add(structure, "remove");
+    }
   }
-
   initFloor(): void {
     var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -319,11 +320,7 @@ export class SceneComponent implements OnInit {
     this.scene.add(ambientLight);
     this.initCamera();
 
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.45);
-    directionalLight.castShadow = true;
-    directionalLight.position.set(-5, 20, 10);
-    directionalLight.shadow.bias = -0.001;
-    this.scene.add(directionalLight);
+
   }
 
   initLights(): void {
@@ -400,12 +397,13 @@ export class SceneComponent implements OnInit {
   createArmarioAddScene(armario) {
     this.Armario = armario;
     this.scene.add(armario);
-    this.initdatGuiObjeto(armario);
+    this.initdatGuiObjeto(armario, true);
   }
   adicionarComponente(componente) {
     if (this.Armario == null) return;
     this.Armario.add(componente);
-    this.initdatGuiObjeto(componente);
+    this.initdatGuiObjeto(componente, false);
+    SceneComponent.componentes.add(componente);
   }
 }
 

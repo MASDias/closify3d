@@ -64,16 +64,15 @@ export class Gaveta extends THREE.Group {
     }
 
     update(dt) {
-        var velocidade = 2.0;
-        
+        var velocidade = 3.5;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
             this.position.z = this.position.z + velocidade * dt;
             if (this.position.z > this.profundidade) {
                 this.reverseAnimation = true;
             } else {
-                if (this.position.z <= 0){
-                    this.position.z=0;
+                if (this.position.z <= 0) {
+                    this.position.z = 0;
                     this.reverseAnimation = false;
                     this.playingAnimation = false;
                 }

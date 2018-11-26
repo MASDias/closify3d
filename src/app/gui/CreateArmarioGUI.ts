@@ -28,7 +28,7 @@ export class CreateArmarioGUI {
     CreateArmarioGUI.instance = this;
     this.controlkit = new Controlkit();
     this.structure = {
-      largura: 15,
+      largura: 25,
       altura: 15,
       profundidade: 15
     };
@@ -70,7 +70,11 @@ export class CreateArmarioGUI {
       .addNumberInput(this.structureComponenteMedidas, "profundidade")
       .addButton('Criar', () => {
 
-        var componente = Factory3D.getInstance().create(this.components_structure.selecionado, this.structureComponenteMedidas.altura, this.structureComponenteMedidas.largura, this.structureComponenteMedidas.largura);
+        var componente = Factory3D.getInstance().create(
+          this.components_structure.selecionado,
+          this.structureComponenteMedidas.largura,
+          this.structureComponenteMedidas.altura,
+          this.structureComponenteMedidas.profundidade);
         this.scene.adicionarComponente(componente);
       });
     var armarioGroup = panel.addGroup({

@@ -7,6 +7,7 @@ export class Armario extends THREE.Group {
         this.largura = largura;
         this.altura = altura;
         this.profundidade = profundidade;
+        this.isArmario = true;
 
         this.espessura = 1;
         // Floor
@@ -59,6 +60,12 @@ export class Armario extends THREE.Group {
 
     animate() {
 
+    }
+    remove(object){
+        console.log(object);
+        console.log(this.children);
+        var index = this.children.indexOf(object);
+        this.children.splice(index);
     }
 
 }
