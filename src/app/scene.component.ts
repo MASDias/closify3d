@@ -263,6 +263,7 @@ export class SceneComponent implements OnInit {
     gaveta.name = "Gaveta"
     this.initdatGuiObjeto(gaveta);
     armario2.add(gaveta);
+    //gaveta.position.x = -0.5;  // Em colisão
     gaveta.position.y = -4.5;
     armario2.position.z = -30;
 
@@ -288,6 +289,23 @@ export class SceneComponent implements OnInit {
     SceneComponent.componentes.push(gaveta);
     SceneComponent.componentes.push(cabide);
     SceneComponent.componentes.push(prateleira);
+
+    var Collisions = new CollisionDetection();
+
+    Collisions.addRay(new THREE.Vector3(0, -1, 0));
+    Collisions.addRay(new THREE.Vector3(0, 1, 0));
+    Collisions.addRay(new THREE.Vector3(1, 0, 0));
+    Collisions.addRay(new THREE.Vector3(-1, 0, 0));
+    Collisions.addRay(new THREE.Vector3(0, 0, -1));
+    Collisions.addRay(new THREE.Vector3(0, 0, 1));
+
+    Collisions.addElement(gaveta);
+    Collisions.addElement(prateleira);
+    Collisions.addElement(cabide);
+    Collisions.addElement(armario2);
+    Collisions.testElement(gaveta); // testar colisão da gaveta com outros
+    Collisions.testElement(cabide);
+    Collisions.testElement(prateleira);
 
     this.scene.add(armario2);
     this.scene.add(armario);
@@ -365,6 +383,8 @@ export class SceneComponent implements OnInit {
     console.log(this.objetoSelecionado);
 
   }
+
+
   dec2hex(i) {
     var result = "0x000000";
     if (i >= 0 && i <= 15) { result = "0x00000" + i.toString(16); }
@@ -386,5 +406,32 @@ export class SceneComponent implements OnInit {
     if (this.Armario == null) return;
     this.Armario.add(componente);
     this.initdatGuiObjeto(componente);
+  }
+}
+
+function CollisionDetection() {
+  var caster = new THREE.Raycaster();
+  var rays = [];
+  var elements = [];
+  var h;
+
+  this.testElement = function (element) {
+    for (var i = 0; i < rays.length; i++) {
+      caster.set(element.position, rays[i]);
+      var hits = caster.intersectObjects(elements, true);
+      for (var k = 0; k < hits.length; k++) {
+        if (hits[k].distance === 0) {
+          console.log("hit", hits[k]);
+          h = hits[k].object;
+          h.material.emissive.setHex(0x0000ff);
+        }
+      }
+    }
+  }
+  this.addRay = function (ray) {
+    rays.push(ray.normalize());
+  }
+  this.addElement = function (element) {
+    elements.push(element);
   }
 }
