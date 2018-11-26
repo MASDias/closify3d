@@ -64,7 +64,7 @@ export class Gaveta extends THREE.Group {
     }
 
     update(dt) {
-        var velocidade = 3.5;
+        var velocidade = 4.5;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
             this.position.z = this.position.z + velocidade * dt;

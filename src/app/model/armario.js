@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import {
+    Porta
+} from './porta';
 
 export class Armario extends THREE.Group {
 
@@ -61,11 +64,20 @@ export class Armario extends THREE.Group {
     animate() {
 
     }
-    remove(object){
+    remove(object) {
         console.log(object);
         console.log(this.children);
         var index = this.children.indexOf(object);
         this.children.splice(index);
     }
 
+    adicionarComponente(componente) {
+        var added = true;
+        if (componente instanceof Porta) {
+            if (componente.altura > this.altura - 2* this.espessura) return false;
+            componente.position.z = this.profundidade / 2;
+        }
+        this.add(componente);
+        return added;
+    }
 }

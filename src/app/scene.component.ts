@@ -55,6 +55,11 @@ export class SceneComponent implements OnInit {
   static componentes;
 
   static instance;
+
+  static hasChanged;
+
+  static collisions = new CollisionDetection();
+
   private datgui;
   private objetoSelecionado;
   private controlkit;
@@ -78,6 +83,7 @@ export class SceneComponent implements OnInit {
 
   ngOnInit() {
 
+    SceneComponent.hasChanged = false;
     this.stats = new Stats();
     this.stats.showPanel(0);
     this.stats.dom.style.position = "fixed";
@@ -132,9 +138,19 @@ export class SceneComponent implements OnInit {
         lastFrameTime = currTime;
       }, 0);
     }
+    const updateColisions = () => {
+      if (SceneComponent.hasChanged) {
+        SceneComponent.collisions.TestAll();
+        SceneComponent.hasChanged = false;
+      }
+      setTimeout(function () {
+        updateColisions();
+      }, 1000 / 2);
+    }
 
     render();
     update(0, totalGameTime);
+    updateColisions();
   }
   initControlKit(): any {
     this.controlkit = new CreateArmarioGUI(this, this.createArmarioAddScene);
@@ -161,17 +177,21 @@ export class SceneComponent implements OnInit {
     var folder;
     folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
     this.datguiStructure.objectcounter++;
-    var x = folder.add(objeto.position, 'x', -100, 100).step(0.5).listen();
+    var x = folder.add(objeto.position, 'x', -100, 100).step(0.5)
+      .listen()
     x.onChange((value) => {
       objeto.position.x = value;
+      SceneComponent.hasChanged = true;
     });
     var y = folder.add(objeto.position, 'y', -100, 100).listen().step(0.1);
     y.onChange((value) => {
       objeto.position.y = value;
+      SceneComponent.hasChanged = true;
     });
     var z = folder.add(objeto.position, 'z', -100, 100).listen().step(0.1);
     z.onChange((value) => {
       objeto.position.z = value;
+      SceneComponent.hasChanged = true;
     });
 
     var color = Math.random() * 0xffffff;
@@ -271,8 +291,8 @@ export class SceneComponent implements OnInit {
     var porta = new Porta(10, 10);
     porta.name = "Porta";
     this.initdatGuiObjeto(porta);
-    armario.add(porta);
-    porta.position.z = 1;
+    armario.adicionarComponente(porta);
+    //porta.position.z = 1;
     SceneComponent.componentes.push(porta);
 
     var cabide = new Cabide(10);
@@ -293,12 +313,7 @@ export class SceneComponent implements OnInit {
 
     var Collisions = new CollisionDetection();
 
-    Collisions.addRay(new THREE.Vector3(0, -1, 0));
-    Collisions.addRay(new THREE.Vector3(0, 1, 0));
-    Collisions.addRay(new THREE.Vector3(1, 0, 0));
-    Collisions.addRay(new THREE.Vector3(-1, 0, 0));
-    Collisions.addRay(new THREE.Vector3(0, 0, -1));
-    Collisions.addRay(new THREE.Vector3(0, 0, 1));
+
 
     Collisions.addElement(gaveta);
     Collisions.addElement(prateleira);
@@ -377,7 +392,8 @@ export class SceneComponent implements OnInit {
       }
 
     }
-    console.log(this.objetoSelecionado);
+    if (this.objetoSelecionado != null)
+      console.log(this.objetoSelecionado);
 
   }
 
@@ -398,12 +414,16 @@ export class SceneComponent implements OnInit {
     this.Armario = armario;
     this.scene.add(armario);
     this.initdatGuiObjeto(armario, true);
+    SceneComponent.collisions.addElement(armario);
   }
   adicionarComponente(componente) {
     if (this.Armario == null) return;
-    this.Armario.add(componente);
-    this.initdatGuiObjeto(componente, false);
-    SceneComponent.componentes.add(componente);
+    if (this.Armario.adicionarComponente(componente)) {
+      this.initdatGuiObjeto(componente, false);
+      SceneComponent.componentes.push(componente);
+      SceneComponent.collisions.addElement(componente);
+      SceneComponent.hasChanged = true;
+    }
   }
 }
 
@@ -411,9 +431,18 @@ function CollisionDetection() {
   var caster = new THREE.Raycaster();
   var rays = [];
   var elements = [];
+  var map = {};
   var h;
 
+  rays.push(new THREE.Vector3(0, -1, 0));
+  rays.push(new THREE.Vector3(0, 1, 0));
+  rays.push(new THREE.Vector3(1, 0, 0));
+  rays.push(new THREE.Vector3(-1, 0, 0));
+  rays.push(new THREE.Vector3(0, 0, -1));
+  rays.push(new THREE.Vector3(0, 0, 1));
+
   this.testElement = function (element) {
+
     for (var i = 0; i < rays.length; i++) {
       caster.set(element.position, rays[i]);
       var hits = caster.intersectObjects(elements, true);
@@ -421,15 +450,30 @@ function CollisionDetection() {
         if (hits[k].distance === 0) {
           console.log("hit", hits[k]);
           h = hits[k].object;
+          var e = element.object;
+          console.log("elemento", element);
           h.material.emissive.setHex(0x0000ff);
-        }
       }
     }
-  }
+  }}  
+
   this.addRay = function (ray) {
     rays.push(ray.normalize());
   }
   this.addElement = function (element) {
     elements.push(element);
+    if (element.material != null) {
+      map[element] = element.material.getHex();
+    }
+  }
+  this.addArray = function (arrays) {
+    elements = arrays;
+  }
+  this.TestAll = function () {
+    if (elements == []) return;
+    var currentInstance = this;
+    elements.forEach(element => {
+      currentInstance.testElement(element);
+    })
   }
 }

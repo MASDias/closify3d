@@ -10,8 +10,10 @@ export class Porta extends THREE.Group {
         this.altura = altura;
         this.playingAnimation = false;
         this.reverseAnimation = false;
-
+        this.tetha = 0;
         this.espessura = 1;
+        this.MAX_ROTATION = 110 * (Math.PI / 180);
+        this.ROTATION_STEP = (Math.PI / 2.0) / 3;
 
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
@@ -20,15 +22,10 @@ export class Porta extends THREE.Group {
             map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             side: THREE.DoubleSide
         });
-
-        // frontGeometry.applyMatrix(
-        //     new THREE.Matrix4().makeTranslation(largura / 2, 0, 0)
-        // );
-
         var porta = new THREE.Mesh(frontGeometry, material);
 
         porta.castShadow = false;
-        porta.position.z = - this.espessura / 2;
+        porta.position.z = -this.espessura / 2;
 
 
         // Pega
@@ -43,43 +40,24 @@ export class Porta extends THREE.Group {
 
         porta.position.x = -largura / 2;
 
-        // var pivotGeometry = new THREE.BoxGeometry(largura *2, altura, this.espessura);
-        // var pivotMaterial = new THREE.MeshLambertMaterial({
-        //     map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
-        //     side: THREE.DoubleSide,
-        //     transparent: true,
-        //     opacity: 1
-        // });
-        // this.pivot = new THREE.Mesh(pivotGeometry, pivotMaterial);
-        // this.pivot.position.x = largura/2;
-        // this.pivot.position.z = largura/2;
-        // // porta.add(this.pivot);
-        // // this.add(porta);
-        // this.pivot.add(porta);
-        // this.add(this.pivot);
-
-        // var axis = new THREE.Vector3(porta.position.x + largura / 2, porta.position.y, 0).normalize();
-        // porta.rotateOnAxis(axis);
-
         this.position.x = largura / 2;
         this.add(porta);
     }
 
     update(dt) {
-        var velocidade = 2.0;
-        //this.pivot.rotation.y += (velocidade * dt);
+        var velocidade = 1.0;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
-            this.rotation.y += (velocidade * dt);
-            // if (this.position.z > this.profundidade) {
-            //     this.reverseAnimation = true;
-            // } else {
-            //     if (this.position.z <= 0) {
-            //         this.position.z = 0;
-            //         this.reverseAnimation = false;
-            //         this.playingAnimation = false;
-            //     }
-            // }
+            this.rotation.y += this.ROTATION_STEP * dt * velocidade;
+            if (this.rotation.y >= this.MAX_ROTATION) {
+                this.reverseAnimation = true;
+                this.playingAnimation = false;
+            }
+            if (this.rotation.y <= 0) {
+                this.playingAnimation = false;
+                this.reverseAnimation = false;
+                this.rotation.y = 0;
+            }
         }
     }
 
