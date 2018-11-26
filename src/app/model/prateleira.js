@@ -3,7 +3,7 @@ export class Prateleira extends THREE.Group {
     constructor(largura, profundidade) {
 
         super();
-
+        this.name ="Prateleira"
         this.espessura = 1;
 
         // Prateleira

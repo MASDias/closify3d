@@ -5,13 +5,13 @@ export class FocoDeLuz extends THREE.Group {
         super();
         this.isLight = true;
         this.espessura = 0.5;
-
+        this.name = "Foco de Luz";
         var material = new THREE.MeshLambertMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             emissive: 0xffffff,
             side: THREE.DoubleSide
         });
-        material.emissiveIntensity=0.4;
+        material.emissiveIntensity = 0.4;
 
         // Base da Luz
         var baseGeometry = new THREE.CylinderGeometry(this.espessura / 2, this.espessura, this.espessura / 2, 30);
@@ -22,12 +22,12 @@ export class FocoDeLuz extends THREE.Group {
         baseCylinder.position.y = y;
         baseCylinder.position.z = z;
 
-        baseCylinder.castShadow=true;
+        baseCylinder.castShadow = false;
         //baseCylinder.receiveShadow=true;
 
         // FocoDeLuz
         var FocoDeLuz = new THREE.SpotLight(0xFFFFAA, 1, 50, 3.1415 / 4);
-        FocoDeLuz.target.position.set(x,0,z);
+        FocoDeLuz.target.position.set(x, 0, z);
         FocoDeLuz.castShadow = true;
         this.light = FocoDeLuz;
         // adding to the group

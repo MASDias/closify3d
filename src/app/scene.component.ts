@@ -175,8 +175,7 @@ export class SceneComponent implements OnInit {
   }
   initdatGuiObjeto(objeto, isArmario = false) {
     var folder;
-    folder = this.datgui.addFolder('Objeto ' + this.datguiStructure.objectcounter);
-    this.datguiStructure.objectcounter++;
+    folder = this.datgui.addFolder(objeto.name + " " + this.datguiStructure.objectcounter++);
     var x = folder.add(objeto.position, 'x', -100, 100).step(0.5)
       .listen()
     x.onChange((value) => {
@@ -329,6 +328,7 @@ export class SceneComponent implements OnInit {
 
     var focoDeLuz = new FocoDeLuz(armario2.position.x, armario2.position.y - 1, armario2.position.z);
     SceneComponent.componentes.push(focoDeLuz);
+    this.initdatGuiObjeto(focoDeLuz);
     this.scene.add(focoDeLuz);
 
     var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
@@ -453,9 +453,10 @@ function CollisionDetection() {
           var e = element.object;
           console.log("elemento", element);
           h.material.emissive.setHex(0x0000ff);
+        }
       }
     }
-  }}  
+  }
 
   this.addRay = function (ray) {
     rays.push(ray.normalize());

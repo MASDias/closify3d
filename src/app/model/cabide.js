@@ -4,7 +4,7 @@ export class Cabide extends THREE.Group {
     constructor(comprimento) {
 
         super();
-
+        this.name = "Cabide";
         this.espessura = 1;
 
         // Pega1
@@ -14,11 +14,11 @@ export class Cabide extends THREE.Group {
             side: THREE.DoubleSide
         });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
-        pegaCylinder.position.y = (comprimento / 2) - 0.5/2;
+        pegaCylinder.position.y = (comprimento / 2) - 0.5 / 2;
 
         // Pega2
         var pegaCylinder2 = new THREE.Mesh(pegaGeometry, pegaMaterial);
-        pegaCylinder2.position.y = -(comprimento / 2) + 0.5/2;
+        pegaCylinder2.position.y = -(comprimento / 2) + 0.5 / 2;
 
         // Barra
         var barraGeometry = new THREE.CylinderGeometry((this.espessura / 4), (this.espessura / 4), comprimento, 30);

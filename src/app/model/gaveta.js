@@ -4,7 +4,7 @@ export class Gaveta extends THREE.Group {
 
 
         super();
-
+        this.name = "Gaveta";
         this.profundidade = profundidade;
         this.largura = largura;
         this.altura = altura;

@@ -11,7 +11,7 @@ export class Armario extends THREE.Group {
         this.altura = altura;
         this.profundidade = profundidade;
         this.isArmario = true;
-
+        this.name = "Armario";
         this.espessura = 1;
         // Floor
         var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
@@ -74,7 +74,7 @@ export class Armario extends THREE.Group {
     adicionarComponente(componente) {
         var added = true;
         if (componente instanceof Porta) {
-            if (componente.altura > this.altura - 2* this.espessura) return false;
+            if (componente.altura > this.altura - 2 * this.espessura) return false;
             componente.position.z = this.profundidade / 2;
         }
         this.add(componente);

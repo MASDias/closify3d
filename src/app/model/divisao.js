@@ -3,7 +3,7 @@ export class Divisao extends THREE.Group {
     constructor(altura, profundidade, invisivel) {
 
         super();
-
+        this.name = "Divisao";
         this.espessura = 1;
 
         var divisionGeometry;
@@ -27,7 +27,7 @@ export class Divisao extends THREE.Group {
 
         var divisao = new THREE.Mesh(divisionGeometry, divisionMaterial);
         divisao.castShadow = false;
-        if(invisivel) divisao.rotateY(3.1415 / 2);
+        if (invisivel) divisao.rotateY(3.1415 / 2);
         divisao.position.z = this.espessura / 2;
 
 

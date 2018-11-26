@@ -5,7 +5,7 @@ export class Porta extends THREE.Group {
     constructor(largura, altura) {
 
         super();
-
+        this.name = "Porta";
         this.largura = largura;
         this.altura = altura;
         this.playingAnimation = false;
