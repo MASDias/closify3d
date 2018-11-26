@@ -383,5 +383,6 @@ export class SceneComponent implements OnInit {
     if (this.Armario == null) return;
     this.Armario.add(componente);
     this.initdatGuiObjeto(componente, false);
+    SceneComponent.componentes.add(componente);
   }
 }

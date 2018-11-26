@@ -66,7 +66,6 @@ export class Armario extends THREE.Group {
         console.log(this.children);
         var index = this.children.indexOf(object);
         this.children.splice(index);
-        //this.children.splice(object);
     }
 
 }
