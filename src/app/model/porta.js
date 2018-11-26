@@ -10,6 +10,7 @@ export class Porta extends THREE.Group {
         this.altura = altura;
         this.playingAnimation = false;
         this.reverseAnimation = false;
+        this.opened = false;
         this.tetha = 0;
         this.espessura = 1;
         this.MAX_ROTATION = 110 * (Math.PI / 180);
@@ -64,6 +65,30 @@ export class Porta extends THREE.Group {
     animate() {
         if (!this.playingAnimation) {
             this.playingAnimation = true;
+
+            //Sound effects
+            var listener = new THREE.AudioListener();
+            var sound = new THREE.Audio(listener);
+
+            if (!this.opened) {
+                var audioLoader = new THREE.AudioLoader();
+                audioLoader.load('assets/sounds/open_door_1.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setLoop(true);
+                    sound.setVolume(0.5);
+                    sound.play();
+                });
+                this.opened = true;
+            }else{
+                var audioLoader2 = new THREE.AudioLoader();
+                audioLoader.load('assets/sounds/close_door_1.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setLoop(true);
+                    sound.setVolume(0.5);
+                    sound.play();
+                });
+                this.opened = false;
+            }
         }
     }
 }
