@@ -46,7 +46,7 @@ export class Porta extends THREE.Group {
     }
 
     update(dt) {
-        var velocidade = 1.0;
+        var velocidade = 4.0;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
             this.rotation.y += this.ROTATION_STEP * dt * velocidade;
@@ -69,26 +69,12 @@ export class Porta extends THREE.Group {
             //Sound effects
             var listener = new THREE.AudioListener();
             var sound = new THREE.Audio(listener);
-
-            if (!this.opened) {
-                var audioLoader = new THREE.AudioLoader();
-                audioLoader.load('assets/sounds/open_door_1.mp3', function (buffer) {
-                    sound.setBuffer(buffer);
-                    sound.setLoop(true);
-                    sound.setVolume(0.5);
-                    sound.play();
-                });
-                this.opened = true;
-            }else{
-                var audioLoader2 = new THREE.AudioLoader();
-                audioLoader.load('assets/sounds/close_door_1.mp3', function (buffer) {
-                    sound.setBuffer(buffer);
-                    sound.setLoop(true);
-                    sound.setVolume(0.5);
-                    sound.play();
-                });
-                this.opened = false;
-            }
+            var audioLoader = new THREE.AudioLoader();
+            audioLoader.load('assets/sounds/open_door_1.mp3', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.5);
+                sound.play();
+            });
         }
     }
 }

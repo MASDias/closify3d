@@ -64,12 +64,23 @@ export class Gaveta extends THREE.Group {
     }
 
     update(dt) {
-        var velocidade = 4.5;
+        var velocidade = 12;
         if (this.playingAnimation) {
-            if (this.reverseAnimation) velocidade *= -1;
+            if (this.reverseAnimation) {
+                velocidade *= -1;
+            }
             this.position.z = this.position.z + velocidade * dt;
             if (this.position.z > this.profundidade) {
                 this.reverseAnimation = true;
+                //Sound effects
+                var listener = new THREE.AudioListener();
+                var sound = new THREE.Audio(listener);
+                var audioLoader = new THREE.AudioLoader();
+                audioLoader.load('assets/sounds/Drawer_Closing.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(0.3);
+                    sound.play();
+                });
             } else {
                 if (this.position.z <= 0) {
                     this.position.z = 0;
@@ -83,6 +94,16 @@ export class Gaveta extends THREE.Group {
     animate() {
         if (!this.playingAnimation) {
             this.playingAnimation = true;
+
+            //Sound effects
+            var listener = new THREE.AudioListener();
+            var sound = new THREE.Audio(listener);
+            var audioLoader = new THREE.AudioLoader();
+            audioLoader.load('assets/sounds/Drawer_Opening.mp3', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.3);
+                sound.play();
+            });
         }
 
     }
