@@ -240,6 +240,20 @@ export class SceneComponent implements OnInit {
           }
       }
       folder.add(structure, "remove");
+    }else {
+      var structure = {
+        remove:
+          function remove() {
+            var _datgui = SceneComponent.instance.datgui;
+            // var _objeto = objeto;
+            var _folder = folder;
+            var _armario = SceneComponent.instance.Armario;
+            SceneComponent.instance.scene.remove(_armario);
+            _datgui.removeFolder(_folder);
+            
+          }
+      }
+      folder.add(structure, "remove");  
     }
   }
   initFloor(): void {
