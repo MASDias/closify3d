@@ -6349,15 +6349,15 @@ var SoundManager = /** @class */ (function () {
     SoundManager.prototype.playSound = function (type) {
         switch (type) {
             case "INVALID":
+            case "CORRECT":
+            case "HAMMER":
+            case "REMOVED":
                 {
-                    if (SoundManager.sounds["INVALID"].buffer == null) {
-                        this.loadAndPlay("INVALID");
-                    }
-                    else {
-                        this.sound.setBuffer(SoundManager.sounds["INVALID"].buffer);
-                        this.sound.play();
-                    }
+                    this.play(type);
                 }
+                break;
+            default:
+                break;
         }
     };
     SoundManager.prototype.loadAndPlay = function (type) {
@@ -6367,11 +6367,38 @@ var SoundManager = /** @class */ (function () {
             _this.sound.setBuffer(buffer);
             _this.sound.setVolume(0.5);
             _this.sound.play();
-        }, function () { }, function () { });
+        }, function () { }, function () {
+            console.log("Error loading sound file: " + type);
+        });
+    };
+    SoundManager.prototype.play = function (type) {
+        if (SoundManager.sounds[type].buffer == null)
+            this.loadAndPlay(type);
+        else {
+            this.sound.setBuffer(SoundManager.sounds[type].buffer);
+            this.sound.play();
+        }
+    };
+    SoundManager.getInstance = function () {
+        if (this.instance == null)
+            this.instance = new SoundManager();
+        return this.instance;
     };
     SoundManager.sounds = {
         INVALID: {
             path: 'assets/sounds/invalid.wav',
+            buffer: null
+        },
+        CORRECT: {
+            path: 'assets/sounds/correct.mp3',
+            buffer: null
+        },
+        HAMMER: {
+            path: 'assets/sounds/hammer.wav',
+            buffer: null
+        },
+        REMOVED: {
+            path: 'assets/sounds/removed.wav',
             buffer: null
         }
     };
@@ -6394,7 +6421,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Armario", function() { return Armario; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 /* harmony import */ var _porta__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./porta */ "./src/app/model/porta.js");
-/* harmony import */ var _SoundManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SoundManager */ "./src/app/model/SoundManager.ts");
+/* harmony import */ var _gaveta__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gaveta */ "./src/app/model/gaveta.js");
+/* harmony import */ var _SoundManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./SoundManager */ "./src/app/model/SoundManager.ts");
+
 
 
 
@@ -6475,13 +6504,19 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
             else
                 componente.position.z = this.profundidade / 2;
         }
-
-        if (added == false) {
-            var sm = new _SoundManager__WEBPACK_IMPORTED_MODULE_2__["SoundManager"]();
-            sm.playSound("INVALID");
-            return added;
+        if (componente instanceof _gaveta__WEBPACK_IMPORTED_MODULE_2__["Gaveta"]) {
+            if (componente.altura > this.altura - 2 * this.espessura) added = false;
+            else if (componente.profundidade >= this.profundidade - this.espessura) added = false;
+            
+                componente.translateY((componente.altura/2));
         }
-        this.add(componente);
+
+        if (added === false) {
+            _SoundManager__WEBPACK_IMPORTED_MODULE_3__["SoundManager"].getInstance().playSound("INVALID");
+        } else {
+            this.add(componente);
+            _SoundManager__WEBPACK_IMPORTED_MODULE_3__["SoundManager"].getInstance().playSound("HAMMER");
+        }
         return added;
     }
 }
@@ -6809,11 +6844,13 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.altura = altura;
         this.playingAnimation = false;
         this.reverseAnimation = false;
+        this.startingAnimation = true;
         this.opened = false;
         this.tetha = 0;
         this.espessura = 1;
         this.MAX_ROTATION = 110 * (Math.PI / 180);
         this.ROTATION_STEP = (Math.PI / 2.0) / 3;
+        this.direction = 1;
 
         // Front
         var frontGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, altura, this.espessura);
@@ -6853,17 +6890,23 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         var velocidade = 4.0;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
-            this.rotation.y += this.ROTATION_STEP * dt * velocidade;
-            if (this.rotation.y >= this.MAX_ROTATION) {
+            this.rotation.y += this.ROTATION_STEP * dt * velocidade * this.direction;
+
+            if (Math.abs(this.rotation.y) >= this.MAX_ROTATION) {
                 this.reverseAnimation = true;
                 this.playingAnimation = false;
+                this.startingAnimation = false;
             }
-            if (this.rotation.y <= 0) {
-                this.playingAnimation = false;
-                this.reverseAnimation = false;
-                this.rotation.y = 0;
+            if (this.startingAnimation == false) {
+                if (Math.abs(this.rotation.y) <= 0.05) {
+                    this.playingAnimation = false;
+                    this.reverseAnimation = false;
+                    this.startingAnimation = true;
+                    this.rotation.y = 0;
+                }
             }
         }
+
     }
 
     animate() {
@@ -6880,6 +6923,11 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
                 sound.play();
             });
         }
+    }
+
+    rotateAndChangeDirection() {
+        this.rotateZ(Math.PI);
+        this.direction *= -1;
     }
 }
 
@@ -6901,8 +6949,9 @@ class Prateleira extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     constructor(largura, profundidade) {
 
         super();
-        this.name ="Prateleira"
+        this.name = "Prateleira"
         this.espessura = 1;
+        this.profundidade = profundidade;
 
         // Prateleira
         var frontGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, this.espessura, profundidade);
@@ -6919,7 +6968,48 @@ class Prateleira extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
 
     }
 
+    update(dt) {
+        var velocidade = 12;
+        if (this.playingAnimation) {
+            if (this.reverseAnimation) {
+                velocidade *= -1;
+            }
+            this.position.z = this.position.z + velocidade * dt;
+            if (this.position.z > this.profundidade) {
+                this.reverseAnimation = true;
+                //Sound effects
+                var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
+                var sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
+                var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+                audioLoader.load('assets/sounds/Drawer_Closing.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(0.3);
+                    sound.play();
+                });
+            } else {
+                if (this.position.z <= 0) {
+                    this.position.z = 0;
+                    this.reverseAnimation = false;
+                    this.playingAnimation = false;
+                }
+            }
+        }
+
+    }
     animate() {
+        if (!this.playingAnimation) {
+            this.playingAnimation = true;
+
+            //Sound effects
+            var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
+            var sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
+            var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+            audioLoader.load('assets/sounds/Drawer_Opening.mp3', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.3);
+                sound.play();
+            });
+        }
 
     }
 
@@ -7011,6 +7101,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _model_gaveta__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./model/gaveta */ "./src/app/model/gaveta.js");
 /* harmony import */ var _model_porta__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./model/porta */ "./src/app/model/porta.js");
 /* harmony import */ var _model_prateleira__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./model/prateleira */ "./src/app/model/prateleira.js");
+/* harmony import */ var _model_SoundManager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./model/SoundManager */ "./src/app/model/SoundManager.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7020,6 +7111,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -7130,7 +7222,7 @@ var SceneComponent = /** @class */ (function () {
         audioLoader.load('assets/music/elevator_music.mp3', function (buffer) {
             sound.setBuffer(buffer);
             sound.setLoop(true);
-            sound.setVolume(0.15);
+            sound.setVolume(0.30);
             sound.play();
         }, function () { }, function () { });
     };
@@ -7199,6 +7291,7 @@ var SceneComponent = /** @class */ (function () {
                     var _armario = SceneComponent_1.instance.Armario;
                     _armario.remove(_objeto);
                     _datgui.removeFolder(_folder);
+                    _model_SoundManager__WEBPACK_IMPORTED_MODULE_14__["SoundManager"].getInstance().playSound("REMOVED");
                 }
             };
             folder.add(structure, "remove");
@@ -7213,10 +7306,20 @@ var SceneComponent = /** @class */ (function () {
                     SceneComponent_1.instance.datguiStructure.allfolders.forEach(function (subfolder) { return _datgui.removeFolder(subfolder); });
                     SceneComponent_1.instance.controlkit.enableArmarioMenu();
                     SceneComponent_1.instance.Armario = null;
+                    _model_SoundManager__WEBPACK_IMPORTED_MODULE_14__["SoundManager"].getInstance().playSound("REMOVED");
                 }
             };
             folder.add(structure, "remove");
         }
+        if (objeto instanceof _model_porta__WEBPACK_IMPORTED_MODULE_12__["Porta"]) {
+            var structure_2 = {
+                rotate: function () {
+                    objeto.rotateAndChangeDirection();
+                }
+            };
+            folder.add(structure_2, "rotate");
+        }
+        ;
     };
     SceneComponent.prototype.initFloor = function () {
         var texture = new three__WEBPACK_IMPORTED_MODULE_3__["TextureLoader"]().load('assets/texture/floor.jpg', function (texture) {
@@ -7395,6 +7498,7 @@ var SceneComponent = /** @class */ (function () {
         this.initdatGuiObjeto(armario, true);
         //SceneComponent.collisions.addElement(armario);
         SceneComponent_1.collisions.armario = armario;
+        _model_SoundManager__WEBPACK_IMPORTED_MODULE_14__["SoundManager"].getInstance().playSound("HAMMER");
     };
     SceneComponent.prototype.adicionarComponente = function (componente) {
         if (this.Armario == null)
