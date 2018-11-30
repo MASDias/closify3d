@@ -6220,18 +6220,28 @@ var CreateArmarioGUI = /** @class */ (function () {
     CreateArmarioGUI.prototype.initPanel = function () {
         var _this = this;
         var panel = this.controlkit.addPanel({
-            label: "Create Armario",
+            label: "Creation",
             align: "left",
             opacity: 0.9
         });
-        this.controlkit
-            .addPanel({
-            label: "Componente",
-            align: "left",
-            opacity: 0.9
-        })
+        panel.addGroup({
+            label: "Create Armario",
+            enable: true
+        });
+        this.armariogroup = panel.getGroups()[0];
+        panel.addNumberInput(this.structure, "largura");
+        panel.addNumberInput(this.structure, "altura");
+        panel.addNumberInput(this.structure, "profundidade");
+        panel.addButton("Criar", function () {
+            var a = new _model_armario__WEBPACK_IMPORTED_MODULE_1__["Armario"](_this.structure.largura, _this.structure.altura, _this.structure.profundidade);
+            _this.scene.createArmarioAddScene(a);
+            _this.armariogroup.disable();
+            _this.componentegroup.enable();
+        });
+        panel
             .addGroup({
-            label: "Criar Componente"
+            label: "Criar Componente",
+            enable: false
         })
             .addSelect(this.components_structure, 'componentes', {
             label: "Selecionar", onChange: function (index) {
@@ -6245,20 +6255,14 @@ var CreateArmarioGUI = /** @class */ (function () {
             var componente = _model_Factory3D__WEBPACK_IMPORTED_MODULE_2__["Factory3D"].getInstance().create(_this.components_structure.selecionado, _this.structureComponenteMedidas.largura, _this.structureComponenteMedidas.altura, _this.structureComponenteMedidas.profundidade);
             _this.scene.adicionarComponente(componente);
         });
-        var armarioGroup = panel.addGroup({
-            label: "Create",
-            enable: true
-        });
-        armarioGroup.addNumberInput(this.structure, "largura");
-        armarioGroup.addNumberInput(this.structure, "altura");
-        armarioGroup.addNumberInput(this.structure, "profundidade");
-        armarioGroup.addButton("Create", function () {
-            var a = new _model_armario__WEBPACK_IMPORTED_MODULE_1__["Armario"](_this.structure.largura, _this.structure.altura, _this.structure.profundidade);
-            _this.scene.createArmarioAddScene(a);
-        });
+        this.componentegroup = panel.getGroups()[1];
     };
     CreateArmarioGUI.prototype.update = function () {
         this.controlkit.update();
+    };
+    CreateArmarioGUI.prototype.enableArmarioMenu = function () {
+        this.armariogroup.enable();
+        this.componentegroup.disable();
     };
     return CreateArmarioGUI;
 }());
@@ -6324,6 +6328,60 @@ var Factory3D = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/model/SoundManager.ts":
+/*!***************************************!*\
+  !*** ./src/app/model/SoundManager.ts ***!
+  \***************************************/
+/*! exports provided: SoundManager */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SoundManager", function() { return SoundManager; });
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+
+var SoundManager = /** @class */ (function () {
+    function SoundManager() {
+        var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
+        this.sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
+        this.audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+    }
+    SoundManager.prototype.playSound = function (type) {
+        switch (type) {
+            case "INVALID":
+                {
+                    if (SoundManager.sounds["INVALID"].buffer == null) {
+                        this.loadAndPlay("INVALID");
+                    }
+                    else {
+                        this.sound.setBuffer(SoundManager.sounds["INVALID"].buffer);
+                        this.sound.play();
+                    }
+                }
+        }
+    };
+    SoundManager.prototype.loadAndPlay = function (type) {
+        var _this = this;
+        this.audioLoader.load(SoundManager.sounds[type].path, function (buffer) {
+            SoundManager.sounds[type].buffer = buffer;
+            _this.sound.setBuffer(buffer);
+            _this.sound.setVolume(0.5);
+            _this.sound.play();
+        }, function () { }, function () { });
+    };
+    SoundManager.sounds = {
+        INVALID: {
+            path: 'assets/sounds/invalid.wav',
+            buffer: null
+        }
+    };
+    return SoundManager;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/model/armario.js":
 /*!**********************************!*\
   !*** ./src/app/model/armario.js ***!
@@ -6336,6 +6394,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Armario", function() { return Armario; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 /* harmony import */ var _porta__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./porta */ "./src/app/model/porta.js");
+/* harmony import */ var _SoundManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SoundManager */ "./src/app/model/SoundManager.ts");
+
 
 
 
@@ -6352,9 +6412,10 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         // Floor
         var floorGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, this.espessura, profundidade);
 
-        var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+        var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhysicalMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood.png'),
-            side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
+            side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"],
+            specular: 0xffffff
         });
         var floorCube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](floorGeometry, material);
         floorCube.position.y = -((altura - this.espessura) / 2);
@@ -6389,7 +6450,7 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.add(backWallCube);
         this.children.forEach(element => {
             element.castShadow = true;
-            //element.receiveShadow=true;
+            element.receiveShadow = true;
         })
         this.translateY(altura / 2);
         this.castShadow = true;
@@ -6410,8 +6471,15 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     adicionarComponente(componente) {
         var added = true;
         if (componente instanceof _porta__WEBPACK_IMPORTED_MODULE_1__["Porta"]) {
-            if (componente.altura > this.altura - 2 * this.espessura) return false;
-            componente.position.z = this.profundidade / 2;
+            if (componente.altura > this.altura - 2 * this.espessura) added = false;
+            else
+                componente.position.z = this.profundidade / 2;
+        }
+
+        if (added == false) {
+            var sm = new _SoundManager__WEBPACK_IMPORTED_MODULE_2__["SoundManager"]();
+            sm.playSound("INVALID");
+            return added;
         }
         this.add(componente);
         return added;
@@ -6442,7 +6510,7 @@ class Cabide extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
 
         // Pega1
         var pegaGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.5, 0.5, 0.5, 30);
-        var pegaMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+        var pegaMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhongMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
@@ -6500,7 +6568,7 @@ class Divisao extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         // Divisao
         if (invisivel) {
             divisionGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](profundidade - this.espessura, altura - (this.espessura * 2));
-            divisionMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+            divisionMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhongMaterial"]({
                 map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
                 transparent: true,
                 opacity: 0.3,
@@ -6508,7 +6576,7 @@ class Divisao extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
             });
         } else {
             divisionGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](this.espessura, altura - (this.espessura * 2), profundidade - this.espessura);
-            divisionMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+            divisionMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhongMaterial"]({
                 map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
                 side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
             });
@@ -6581,6 +6649,8 @@ class FocoDeLuz extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.add(baseCylinder);
         this.add(FocoDeLuz.target);
 
+        FocoDeLuz.shadow.bias = -0.001;
+
     }
 
 }
@@ -6613,7 +6683,7 @@ class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
 
         this.espessura = 1;
 
-        var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+        var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhongMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood4.jpg'),
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
@@ -6661,6 +6731,10 @@ class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.add(leftWallCube);
         this.add(rightWallCube);
         this.add(backWallCube);
+        this.children.forEach(element => {
+            element.castShadow = true;
+            element.receiveShadow = true;
+        })
     }
 
     update(dt) {
@@ -6744,7 +6818,7 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         // Front
         var frontGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, altura, this.espessura);
         //frontGeometry.translate(0, largura / 2, 0);
-        var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+        var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhongMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
@@ -6768,6 +6842,11 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
 
         this.position.x = largura / 2;
         this.add(porta);
+
+        this.children.forEach(element => {
+            element.castShadow = true;
+            element.receiveShadow = true;
+        });
     }
 
     update(dt) {
@@ -6827,7 +6906,7 @@ class Prateleira extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
 
         // Prateleira
         var frontGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](largura, this.espessura, profundidade);
-        var frontMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
+        var frontMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhongMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load('assets/texture/wood3.jpg'),
             side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
@@ -6987,13 +7066,15 @@ var SceneComponent = /** @class */ (function () {
         SceneComponent_1.componentes = new Array();
         SceneComponent_1.camera = new three__WEBPACK_IMPORTED_MODULE_3__["PerspectiveCamera"](45, window.innerWidth / window.innerHeight, 0.1, 500);
         this.controls = new three_orbitcontrols__WEBPACK_IMPORTED_MODULE_4__(SceneComponent_1.camera, this.renderer.domElement);
+        this.initStarfield();
         this.initFloor();
         this.initRenderer();
         this.initControlKit();
         this.initdatGUI();
-        this.initObjects();
+        //this.initObjects();
         this.initLights();
         this.initMusic();
+        this.initCamera();
         var render = function () {
             _this.stats.begin();
             _this.controlkit.update();
@@ -7025,11 +7106,23 @@ var SceneComponent = /** @class */ (function () {
             }
             setTimeout(function () {
                 updateColisions();
-            }, 1000 / 2);
+            }, 1750 / 2);
         };
         render();
         update(0, totalGameTime);
         updateColisions();
+    };
+    SceneComponent.prototype.initStarfield = function () {
+        var texture = new three__WEBPACK_IMPORTED_MODULE_3__["TextureLoader"]().load('assets/texture/sky_background.jpg', function (texture) {
+            texture.wrapS = texture.wrapT = three__WEBPACK_IMPORTED_MODULE_3__["RepeatWrapping"];
+            //texture.offset(0, 0);
+            texture.repeat.set(1, 1);
+        });
+        var galaxy = new three__WEBPACK_IMPORTED_MODULE_3__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_3__["SphereGeometry"](256, 128, 128), new three__WEBPACK_IMPORTED_MODULE_3__["MeshBasicMaterial"]({
+            map: texture,
+            side: three__WEBPACK_IMPORTED_MODULE_3__["BackSide"]
+        }));
+        this.scene.add(galaxy);
     };
     SceneComponent.prototype.initMusic = function () {
         var audioLoader = new three__WEBPACK_IMPORTED_MODULE_3__["AudioLoader"]();
@@ -7048,22 +7141,25 @@ var SceneComponent = /** @class */ (function () {
         this.datgui = new dat_gui__WEBPACK_IMPORTED_MODULE_1__["GUI"]();
         this.datguiStructure = {
             folderobjeto: "",
-            objectcounter: 0
+            objectcounter: 0,
+            allfolders: []
         };
         this.color = {
             color0: 0,
             color1: 0,
         };
-        var cam = this.datgui.addFolder('Camera');
-        var x = cam.add(SceneComponent_1.camera.position, 'x', -100, 100).listen();
-        cam.add(SceneComponent_1.camera.position, 'y', -100, 100).listen();
-        cam.add(SceneComponent_1.camera.position, 'z', -100, 100).listen();
+        // var cam = this.datgui.addFolder('Camera');
+        // var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
+        // cam.add(SceneComponent.camera.position, 'y', -100, 100).listen();
+        // cam.add(SceneComponent.camera.position, 'z', -100, 100).listen();
     };
-    SceneComponent.prototype.initdatGuiObjeto = function (objeto, isArmario) {
+    SceneComponent.prototype.initdatGuiObjeto = function (objeto, isArmario, isLight) {
         var _this = this;
         if (isArmario === void 0) { isArmario = false; }
+        if (isLight === void 0) { isLight = false; }
         var folder;
         folder = this.datgui.addFolder(objeto.name + " " + this.datguiStructure.objectcounter++);
+        this.datguiStructure.allfolders.push(folder);
         var x = folder.add(objeto.position, 'x', -100, 100).step(0.5)
             .listen();
         x.onChange(function (value) {
@@ -7089,9 +7185,11 @@ var SceneComponent = /** @class */ (function () {
         });
         if (objeto.isLight != null && objeto.isLight == true)
             var color2 = Math.random() * 0xffffff;
-        folder.addColor(this.color, 'color1', color2).onChange(function () {
-            objeto.light.color.setHex(_this.dec2hex(_this.color.color1));
-        });
+        if (isLight) {
+            folder.addColor(this.color, 'color1', color2).onChange(function () {
+                objeto.light.color.setHex(_this.dec2hex(_this.color.color1));
+            });
+        }
         if (isArmario == false) {
             var structure = {
                 remove: function remove() {
@@ -7105,6 +7203,20 @@ var SceneComponent = /** @class */ (function () {
             };
             folder.add(structure, "remove");
         }
+        else {
+            var structure = {
+                remove: function remove() {
+                    var _datgui = SceneComponent_1.instance.datgui;
+                    //var _folder = folder;
+                    var _armario = SceneComponent_1.instance.Armario;
+                    SceneComponent_1.instance.scene.remove(_armario);
+                    SceneComponent_1.instance.datguiStructure.allfolders.forEach(function (subfolder) { return _datgui.removeFolder(subfolder); });
+                    SceneComponent_1.instance.controlkit.enableArmarioMenu();
+                    SceneComponent_1.instance.Armario = null;
+                }
+            };
+            folder.add(structure, "remove");
+        }
     };
     SceneComponent.prototype.initFloor = function () {
         var texture = new three__WEBPACK_IMPORTED_MODULE_3__["TextureLoader"]().load('assets/texture/floor.jpg', function (texture) {
@@ -7112,7 +7224,7 @@ var SceneComponent = /** @class */ (function () {
             //texture.offset(0, 0);
             texture.repeat.set(10, 10);
         });
-        var floor = new three__WEBPACK_IMPORTED_MODULE_3__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_3__["PlaneGeometry"](200, 200, 200, 200), new three__WEBPACK_IMPORTED_MODULE_3__["MeshPhongMaterial"]({
+        var floor = new three__WEBPACK_IMPORTED_MODULE_3__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_3__["PlaneGeometry"](200, 200, 200, 200), new three__WEBPACK_IMPORTED_MODULE_3__["MeshPhysicalMaterial"]({
             map: texture,
             side: three__WEBPACK_IMPORTED_MODULE_3__["FrontSide"]
         }));
@@ -7194,18 +7306,16 @@ var SceneComponent = /** @class */ (function () {
         SceneComponent_1.componentes.push(focoDeLuz);
         this.initdatGuiObjeto(focoDeLuz);
         this.scene.add(focoDeLuz);
-        var ambientLight = new three__WEBPACK_IMPORTED_MODULE_3__["AmbientLight"](0x404040, 0.2);
-        this.scene.add(ambientLight);
-        this.initCamera();
         //document.addEventListener("keydown", this.On)
     };
     SceneComponent.prototype.initLights = function () {
-        var ambientLight = new three__WEBPACK_IMPORTED_MODULE_3__["AmbientLight"](0x404040, 0.10);
-        this.scene.add(ambientLight);
-        var directionalLight = new three__WEBPACK_IMPORTED_MODULE_3__["DirectionalLight"](0xffffff, 0.5);
-        //directionalLight.castShadow = true;
-        directionalLight.position.set(-5, 20, 10);
+        var ambientLight = new three__WEBPACK_IMPORTED_MODULE_3__["AmbientLight"](0x404040, 0.7);
+        var directionalLight = new three__WEBPACK_IMPORTED_MODULE_3__["SpotLight"](0xffffff, 0.5);
+        directionalLight.castShadow = true;
+        directionalLight.position.set(0, 25, 25);
+        directionalLight.target.position.set(0, -1, -1);
         directionalLight.shadow.bias = -0.001;
+        this.scene.add(ambientLight);
         this.scene.add(directionalLight);
     };
     SceneComponent.prototype.initCamera = function () {
@@ -7290,7 +7400,11 @@ var SceneComponent = /** @class */ (function () {
         if (this.Armario == null)
             return;
         if (this.Armario.adicionarComponente(componente)) {
-            this.initdatGuiObjeto(componente, false);
+            var isLight = false;
+            if (componente.isLight != null) {
+                isLight = componente.isLight;
+            }
+            this.initdatGuiObjeto(componente, false, isLight);
             SceneComponent_1.componentes.push(componente);
             SceneComponent_1.collisions.addElement(componente);
             SceneComponent_1.hasChanged = true;

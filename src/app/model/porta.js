@@ -10,11 +10,13 @@ export class Porta extends THREE.Group {
         this.altura = altura;
         this.playingAnimation = false;
         this.reverseAnimation = false;
+        this.startingAnimation = true;
         this.opened = false;
         this.tetha = 0;
         this.espessura = 1;
         this.MAX_ROTATION = 110 * (Math.PI / 180);
         this.ROTATION_STEP = (Math.PI / 2.0) / 3;
+        this.direction = 1;
 
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
@@ -54,17 +56,23 @@ export class Porta extends THREE.Group {
         var velocidade = 4.0;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
-            this.rotation.y += this.ROTATION_STEP * dt * velocidade;
-            if (this.rotation.y >= this.MAX_ROTATION) {
+            this.rotation.y += this.ROTATION_STEP * dt * velocidade * this.direction;
+
+            if (Math.abs(this.rotation.y) >= this.MAX_ROTATION) {
                 this.reverseAnimation = true;
                 this.playingAnimation = false;
+                this.startingAnimation = false;
             }
-            if (this.rotation.y <= 0) {
-                this.playingAnimation = false;
-                this.reverseAnimation = false;
-                this.rotation.y = 0;
+            if (this.startingAnimation == false) {
+                if (Math.abs(this.rotation.y) <= 0.05) {
+                    this.playingAnimation = false;
+                    this.reverseAnimation = false;
+                    this.startingAnimation = true;
+                    this.rotation.y = 0;
+                }
             }
         }
+
     }
 
     animate() {
@@ -81,5 +89,10 @@ export class Porta extends THREE.Group {
                 sound.play();
             });
         }
+    }
+
+    rotateAndChangeDirection() {
+        this.rotateZ(Math.PI);
+        this.direction *= -1;
     }
 }

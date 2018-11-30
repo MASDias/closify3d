@@ -3,6 +3,9 @@ import {
     Porta
 } from './porta';
 import {
+    Gaveta
+} from './gaveta';
+import {
     SoundManager
 } from './SoundManager';
 
@@ -82,13 +85,19 @@ export class Armario extends THREE.Group {
             else
                 componente.position.z = this.profundidade / 2;
         }
-
-        if (added == false) {
-            var sm = new SoundManager();
-            sm.playSound("INVALID");
-            return added;
+        if (componente instanceof Gaveta) {
+            if (componente.altura > this.altura - 2 * this.espessura) added = false;
+            else if (componente.profundidade >= this.profundidade - this.espessura) added = false;
+            
+                componente.translateY((componente.altura/2));
         }
-        this.add(componente);
+
+        if (added === false) {
+            SoundManager.getInstance().playSound("INVALID");
+        } else {
+            this.add(componente);
+            SoundManager.getInstance().playSound("HAMMER");
+        }
         return added;
     }
 }

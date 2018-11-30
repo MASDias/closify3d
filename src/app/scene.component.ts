@@ -15,6 +15,7 @@ import { Prateleira } from './model/prateleira';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { Scene } from 'three';
 import { Variable } from '@angular/compiler/src/render3/r3_ast';
+import { SoundManager } from './model/SoundManager'
 interface Rotation {
   x: number;
   y: number;
@@ -184,7 +185,7 @@ export class SceneComponent implements OnInit {
     audioLoader.load('assets/music/elevator_music.mp3', function (buffer) {
       sound.setBuffer(buffer);
       sound.setLoop(true);
-      sound.setVolume(0.15);
+      sound.setVolume(0.30);
       sound.play();
     }, () => { }, () => { });
   }
@@ -258,7 +259,7 @@ export class SceneComponent implements OnInit {
             var _armario = SceneComponent.instance.Armario;
             _armario.remove(_objeto);
             _datgui.removeFolder(_folder);
-
+            SoundManager.getInstance().playSound("REMOVED");
           }
       }
       folder.add(structure, "remove");
@@ -273,10 +274,20 @@ export class SceneComponent implements OnInit {
             SceneComponent.instance.datguiStructure.allfolders.forEach(subfolder => _datgui.removeFolder(subfolder));
             SceneComponent.instance.controlkit.enableArmarioMenu();
             SceneComponent.instance.Armario = null;
+            SoundManager.getInstance().playSound("REMOVED");
           }
       }
       folder.add(structure, "remove");
     }
+    if (objeto instanceof Porta) {
+      var structure_2 = {
+        rotate: function () {
+          objeto.rotateAndChangeDirection();
+        }
+      }
+      folder.add(structure_2, "rotate");
+    };
+
   }
   initFloor(): void {
     var texture = new THREE.TextureLoader().load('assets/texture/floor.jpg', function (texture) {
@@ -470,6 +481,7 @@ export class SceneComponent implements OnInit {
     this.initdatGuiObjeto(armario, true);
     //SceneComponent.collisions.addElement(armario);
     SceneComponent.collisions.armario = armario;
+    SoundManager.getInstance().playSound("HAMMER");
   }
   adicionarComponente(componente) {
     if (this.Armario == null) return;
