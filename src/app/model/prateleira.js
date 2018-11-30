@@ -8,7 +8,7 @@ export class Prateleira extends THREE.Group {
 
         // Prateleira
         var frontGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
-        var frontMaterial = new THREE.MeshLambertMaterial({
+        var frontMaterial = new THREE.MeshPhongMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             side: THREE.DoubleSide
         });

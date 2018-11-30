@@ -19,7 +19,7 @@ export class Porta extends THREE.Group {
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         //frontGeometry.translate(0, largura / 2, 0);
-        var material = new THREE.MeshLambertMaterial({
+        var material = new THREE.MeshPhongMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
             side: THREE.DoubleSide
         });
@@ -43,6 +43,11 @@ export class Porta extends THREE.Group {
 
         this.position.x = largura / 2;
         this.add(porta);
+
+        this.children.forEach(element => {
+            element.castShadow = true;
+            element.receiveShadow = true;
+        });
     }
 
     update(dt) {

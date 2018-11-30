@@ -58,6 +58,7 @@ export class CreateArmarioGUI {
       label: "Create Armario",
       enable: true
     });
+    this.armariogroup =panel.getGroups()[0];
     panel.addNumberInput(this.structure, "largura");
     panel.addNumberInput(this.structure, "altura");
     panel.addNumberInput(this.structure, "profundidade");
@@ -68,8 +69,10 @@ export class CreateArmarioGUI {
         this.structure.profundidade
       );
       this.scene.createArmarioAddScene(a);
-      panel.getGroups()[0].disable();
-      panel.getGroups()[1].enable();
+
+      this.armariogroup.disable();
+
+      this.componentegroup.enable();
     });
 
     panel
@@ -95,10 +98,15 @@ export class CreateArmarioGUI {
         this.scene.adicionarComponente(componente);
         
       });
-
+      this.componentegroup = panel.getGroups()[1]
 
   }
   update() {
     this.controlkit.update();
+  }
+
+  enableArmarioMenu(){
+    this.armariogroup.enable();
+    this.componentegroup.disable();
   }
 }

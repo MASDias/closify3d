@@ -61,6 +61,10 @@ export class Gaveta extends THREE.Group {
         this.add(leftWallCube);
         this.add(rightWallCube);
         this.add(backWallCube);
+        this.children.forEach(element => {
+            element.castShadow = true;
+            element.receiveShadow = true;
+        })
     }
 
     update(dt) {

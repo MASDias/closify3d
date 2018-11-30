@@ -78,7 +78,8 @@ export class SceneComponent implements OnInit {
   //datgui
   private datguiStructure: {
     folderobjeto,
-    objectcounter
+    objectcounter,
+    allfolders
   }
   private color: {
     color0,
@@ -109,13 +110,15 @@ export class SceneComponent implements OnInit {
     SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
     this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
 
+    this.initStarfield();
     this.initFloor();
     this.initRenderer();
     this.initControlKit();
     this.initdatGUI();
-    this.initObjects();
+    //this.initObjects();
     this.initLights();
     this.initMusic();
+    this.initCamera();
     const render = () => {
       this.stats.begin();
       this.controlkit.update();
@@ -153,12 +156,27 @@ export class SceneComponent implements OnInit {
       }
       setTimeout(function () {
         updateColisions();
-      }, 1000 / 2);
+      }, 1750 / 2);
     }
 
     render();
     update(0, totalGameTime);
     updateColisions();
+  }
+  initStarfield(): any {
+    var texture = new THREE.TextureLoader().load('assets/texture/sky_background.jpg', function (texture) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      //texture.offset(0, 0);
+      texture.repeat.set(1, 1);
+    });
+    var galaxy = new THREE.Mesh(
+      new THREE.SphereGeometry(256, 128, 128),
+      new THREE.MeshBasicMaterial({
+        map: texture,
+        side: THREE.BackSide
+      })
+    )
+    this.scene.add(galaxy);
   }
   initMusic(): any {
     var audioLoader = new THREE.AudioLoader();
@@ -178,22 +196,25 @@ export class SceneComponent implements OnInit {
     this.datgui = new dat.GUI();
     this.datguiStructure = {
       folderobjeto: "",
-      objectcounter: 0
+      objectcounter: 0,
+      allfolders: []
     }
     this.color = {
       color0: 0,
       color1: 0,
     }
-    var cam = this.datgui.addFolder('Camera');
-    var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
-    cam.add(SceneComponent.camera.position, 'y', -100, 100).listen();
-    cam.add(SceneComponent.camera.position, 'z', -100, 100).listen();
+    // var cam = this.datgui.addFolder('Camera');
+    // var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
+    // cam.add(SceneComponent.camera.position, 'y', -100, 100).listen();
+    // cam.add(SceneComponent.camera.position, 'z', -100, 100).listen();
 
 
   }
-  initdatGuiObjeto(objeto, isArmario = false) {
+  initdatGuiObjeto(objeto, isArmario = false, isLight = false) {
     var folder;
     folder = this.datgui.addFolder(objeto.name + " " + this.datguiStructure.objectcounter++);
+
+    this.datguiStructure.allfolders.push(folder);
     var x = folder.add(objeto.position, 'x', -100, 100).step(0.5)
       .listen()
     x.onChange((value) => {
@@ -222,10 +243,11 @@ export class SceneComponent implements OnInit {
     if (objeto.isLight != null && objeto.isLight == true)
       var color2 = Math.random() * 0xffffff;
 
-
-    folder.addColor(this.color, 'color1', color2).onChange(() => {
-      objeto.light.color.setHex(this.dec2hex(this.color.color1));
-    });
+    if (isLight) {
+      folder.addColor(this.color, 'color1', color2).onChange(() => {
+        objeto.light.color.setHex(this.dec2hex(this.color.color1));
+      });
+    }
     if (isArmario == false) {
       var structure = {
         remove:
@@ -240,20 +262,20 @@ export class SceneComponent implements OnInit {
           }
       }
       folder.add(structure, "remove");
-    }else {
+    } else {
       var structure = {
         remove:
           function remove() {
             var _datgui = SceneComponent.instance.datgui;
-            // var _objeto = objeto;
-            var _folder = folder;
+            //var _folder = folder;
             var _armario = SceneComponent.instance.Armario;
             SceneComponent.instance.scene.remove(_armario);
-            _datgui.removeFolder(_folder);
-            
+            SceneComponent.instance.datguiStructure.allfolders.forEach(subfolder => _datgui.removeFolder(subfolder));
+            SceneComponent.instance.controlkit.enableArmarioMenu();
+            SceneComponent.instance.Armario = null;
           }
       }
-      folder.add(structure, "remove");  
+      folder.add(structure, "remove");
     }
   }
   initFloor(): void {
@@ -264,7 +286,7 @@ export class SceneComponent implements OnInit {
     });
     var floor = new THREE.Mesh(
       new THREE.PlaneGeometry(200, 200, 200, 200),
-      new THREE.MeshPhongMaterial({
+      new THREE.MeshPhysicalMaterial({
         map: texture,
         side: THREE.FrontSide
       })
@@ -281,6 +303,7 @@ export class SceneComponent implements OnInit {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.BasicShadowMap;
   }
+
   initObjects(): void {
     var armario = new Armario(12, 12, 12);
     this.initdatGuiObjeto(armario);
@@ -363,20 +386,18 @@ export class SceneComponent implements OnInit {
     this.initdatGuiObjeto(focoDeLuz);
     this.scene.add(focoDeLuz);
 
-    var ambientLight = new THREE.AmbientLight(0x404040, 0.2);
-    this.scene.add(ambientLight);
-    this.initCamera();
     //document.addEventListener("keydown", this.On)
 
   }
 
   initLights(): void {
-    var ambientLight = new THREE.AmbientLight(0x404040, 0.10);
-    this.scene.add(ambientLight);
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    //directionalLight.castShadow = true;
-    directionalLight.position.set(-5, 20, 10);
+    var ambientLight = new THREE.AmbientLight(0x404040, 0.7);
+    var directionalLight = new THREE.SpotLight(0xffffff, 0.5);
+    directionalLight.castShadow = true;
+    directionalLight.position.set(0, 25, 25);
+    directionalLight.target.position.set(0, -1, -1);
     directionalLight.shadow.bias = -0.001;
+    this.scene.add(ambientLight);
     this.scene.add(directionalLight);
   }
   initCamera(): void {
@@ -453,7 +474,11 @@ export class SceneComponent implements OnInit {
   adicionarComponente(componente) {
     if (this.Armario == null) return;
     if (this.Armario.adicionarComponente(componente)) {
-      this.initdatGuiObjeto(componente, false);
+      var isLight = false;
+      if (componente.isLight != null) {
+        isLight = componente.isLight
+      }
+      this.initdatGuiObjeto(componente, false, isLight);
       SceneComponent.componentes.push(componente);
       SceneComponent.collisions.addElement(componente);
       SceneComponent.hasChanged = true;

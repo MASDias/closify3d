@@ -11,7 +11,7 @@ export class Divisao extends THREE.Group {
         // Divisao
         if (invisivel) {
             divisionGeometry = new THREE.PlaneGeometry(profundidade - this.espessura, altura - (this.espessura * 2));
-            divisionMaterial = new THREE.MeshLambertMaterial({
+            divisionMaterial = new THREE.MeshPhongMaterial({
                 map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
                 transparent: true,
                 opacity: 0.3,
@@ -19,7 +19,7 @@ export class Divisao extends THREE.Group {
             });
         } else {
             divisionGeometry = new THREE.BoxGeometry(this.espessura, altura - (this.espessura * 2), profundidade - this.espessura);
-            divisionMaterial = new THREE.MeshLambertMaterial({
+            divisionMaterial = new THREE.MeshPhongMaterial({
                 map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
                 side: THREE.DoubleSide
             });
