@@ -35,6 +35,8 @@ export class FocoDeLuz extends THREE.Group {
         this.add(baseCylinder);
         this.add(FocoDeLuz.target);
 
+        FocoDeLuz.shadow.bias = -0.001;
+
     }
 
 }

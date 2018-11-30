@@ -16,9 +16,10 @@ export class Armario extends THREE.Group {
         // Floor
         var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
 
-        var material = new THREE.MeshLambertMaterial({
+        var material = new THREE.MeshPhongMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood.png'),
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            specular : 0xffffff
         });
         var floorCube = new THREE.Mesh(floorGeometry, material);
         floorCube.position.y = -((altura - this.espessura) / 2);
@@ -53,7 +54,7 @@ export class Armario extends THREE.Group {
         this.add(backWallCube);
         this.children.forEach(element => {
             element.castShadow = true;
-            //element.receiveShadow=true;
+            element.receiveShadow=true;
         })
         this.translateY(altura / 2);
         this.castShadow = true;

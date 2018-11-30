@@ -6664,12 +6664,23 @@ class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     }
 
     update(dt) {
-        var velocidade = 4.5;
+        var velocidade = 12;
         if (this.playingAnimation) {
-            if (this.reverseAnimation) velocidade *= -1;
+            if (this.reverseAnimation) {
+                velocidade *= -1;
+            }
             this.position.z = this.position.z + velocidade * dt;
             if (this.position.z > this.profundidade) {
                 this.reverseAnimation = true;
+                //Sound effects
+                var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
+                var sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
+                var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+                audioLoader.load('assets/sounds/Drawer_Closing.mp3', function (buffer) {
+                    sound.setBuffer(buffer);
+                    sound.setVolume(0.3);
+                    sound.play();
+                });
             } else {
                 if (this.position.z <= 0) {
                     this.position.z = 0;
@@ -6683,6 +6694,16 @@ class Gaveta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     animate() {
         if (!this.playingAnimation) {
             this.playingAnimation = true;
+
+            //Sound effects
+            var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
+            var sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
+            var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+            audioLoader.load('assets/sounds/Drawer_Opening.mp3', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.3);
+                sound.play();
+            });
         }
 
     }
@@ -6750,7 +6771,7 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
     }
 
     update(dt) {
-        var velocidade = 1.0;
+        var velocidade = 4.0;
         if (this.playingAnimation) {
             if (this.reverseAnimation) velocidade *= -1;
             this.rotation.y += this.ROTATION_STEP * dt * velocidade;
@@ -6773,26 +6794,12 @@ class Porta extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
             //Sound effects
             var listener = new three__WEBPACK_IMPORTED_MODULE_0__["AudioListener"]();
             var sound = new three__WEBPACK_IMPORTED_MODULE_0__["Audio"](listener);
-
-            if (!this.opened) {
-                var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
-                audioLoader.load('assets/sounds/open_door_1.mp3', function (buffer) {
-                    sound.setBuffer(buffer);
-                    sound.setLoop(true);
-                    sound.setVolume(0.5);
-                    sound.play();
-                });
-                this.opened = true;
-            }else{
-                var audioLoader2 = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
-                audioLoader.load('assets/sounds/close_door_1.mp3', function (buffer) {
-                    sound.setBuffer(buffer);
-                    sound.setLoop(true);
-                    sound.setVolume(0.5);
-                    sound.play();
-                });
-                this.opened = false;
-            }
+            var audioLoader = new three__WEBPACK_IMPORTED_MODULE_0__["AudioLoader"]();
+            audioLoader.load('assets/sounds/open_door_1.mp3', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.5);
+                sound.play();
+            });
         }
     }
 }
@@ -6986,6 +6993,7 @@ var SceneComponent = /** @class */ (function () {
         this.initdatGUI();
         this.initObjects();
         this.initLights();
+        this.initMusic();
         var render = function () {
             _this.stats.begin();
             _this.controlkit.update();
@@ -7022,6 +7030,16 @@ var SceneComponent = /** @class */ (function () {
         render();
         update(0, totalGameTime);
         updateColisions();
+    };
+    SceneComponent.prototype.initMusic = function () {
+        var audioLoader = new three__WEBPACK_IMPORTED_MODULE_3__["AudioLoader"]();
+        var sound = this.sound;
+        audioLoader.load('assets/music/elevator_music.mp3', function (buffer) {
+            sound.setBuffer(buffer);
+            sound.setLoop(true);
+            sound.setVolume(0.15);
+            sound.play();
+        }, function () { }, function () { });
     };
     SceneComponent.prototype.initControlKit = function () {
         this.controlkit = new _gui_CreateArmarioGUI__WEBPACK_IMPORTED_MODULE_6__["CreateArmarioGUI"](this, this.createArmarioAddScene);

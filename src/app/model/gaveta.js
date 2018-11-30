@@ -13,7 +13,7 @@ export class Gaveta extends THREE.Group {
 
         this.espessura = 1;
 
-        var material = new THREE.MeshLambertMaterial({
+        var material = new THREE.MeshPhongMaterial({
             map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
             side: THREE.DoubleSide
         });

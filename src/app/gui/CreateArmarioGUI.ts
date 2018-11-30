@@ -24,6 +24,9 @@ export class CreateArmarioGUI {
   public static instance;
   public scene;
 
+  private armariogroup;
+  private componentegroup;
+
   constructor(scene, cb) {
     CreateArmarioGUI.instance = this;
     this.controlkit = new Controlkit();
@@ -47,18 +50,30 @@ export class CreateArmarioGUI {
 
   initPanel() {
     var panel = this.controlkit.addPanel({
-      label: "Create Armario",
+      label: "Creation",
       align: "left",
       opacity: 0.9
     });
-    this.controlkit
-      .addPanel({
-        label: "Componente",
-        align: "left",
-        opacity: 0.9
-      })
+    this.armariogroup = panel.addGroup({
+      label: "Create Armario",
+      enable: true
+    });
+    this.armariogroup.addNumberInput(this.structure, "largura");
+    this.armariogroup.addNumberInput(this.structure, "altura");
+    this.armariogroup.addNumberInput(this.structure, "profundidade");
+    this.armariogroup.addButton("Create", () => {
+      var a: Armario = new Armario(
+        this.structure.largura,
+        this.structure.altura,
+        this.structure.profundidade
+      );
+      this.scene.createArmarioAddScene(a);  
+    });
+
+    this.componentegroup=panel
       .addGroup({
-        label: "Criar Componente"
+        label: "Criar Componente",
+        enable: false
       })
       .addSelect(this.components_structure, 'componentes', {
         label: "Selecionar", onChange: function (index) {
@@ -77,21 +92,8 @@ export class CreateArmarioGUI {
           this.structureComponenteMedidas.profundidade);
         this.scene.adicionarComponente(componente);
       });
-    var armarioGroup = panel.addGroup({
-      label: "Create",
-      enable: true
-    });
-    armarioGroup.addNumberInput(this.structure, "largura");
-    armarioGroup.addNumberInput(this.structure, "altura");
-    armarioGroup.addNumberInput(this.structure, "profundidade");
-    armarioGroup.addButton("Create", () => {
-      var a: Armario = new Armario(
-        this.structure.largura,
-        this.structure.altura,
-        this.structure.profundidade
-      );
-      this.scene.createArmarioAddScene(a);
-    });
+
+
   }
   update() {
     this.controlkit.update();
