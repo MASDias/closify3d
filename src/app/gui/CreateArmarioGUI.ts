@@ -54,23 +54,25 @@ export class CreateArmarioGUI {
       align: "left",
       opacity: 0.9
     });
-    this.armariogroup = panel.addGroup({
+    panel.addGroup({
       label: "Create Armario",
       enable: true
     });
-    this.armariogroup.addNumberInput(this.structure, "largura");
-    this.armariogroup.addNumberInput(this.structure, "altura");
-    this.armariogroup.addNumberInput(this.structure, "profundidade");
-    this.armariogroup.addButton("Create", () => {
+    panel.addNumberInput(this.structure, "largura");
+    panel.addNumberInput(this.structure, "altura");
+    panel.addNumberInput(this.structure, "profundidade");
+    panel.addButton("Criar", () => {
       var a: Armario = new Armario(
         this.structure.largura,
         this.structure.altura,
         this.structure.profundidade
       );
-      this.scene.createArmarioAddScene(a);  
+      this.scene.createArmarioAddScene(a);
+      panel.getGroups()[0].disable();
+      panel.getGroups()[1].enable();
     });
 
-    this.componentegroup=panel
+    panel
       .addGroup({
         label: "Criar Componente",
         enable: false
@@ -91,6 +93,7 @@ export class CreateArmarioGUI {
           this.structureComponenteMedidas.altura,
           this.structureComponenteMedidas.profundidade);
         this.scene.adicionarComponente(componente);
+        
       });
 
 
