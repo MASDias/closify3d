@@ -4,10 +4,103 @@
   <title>SGRAI 18/19 3DH</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <meta charset="utf-8" />
+  <style>
+    h2 {
+      color: #68696b;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 22px;
+      font-weight: 100;
+      line-height: 23px;
+      letter-spacing: 1px;
+      padding: 20px 0 20px;
+    }
+
+    h3 {
+      color: #68696b;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 22px;
+      font-weight: 100;
+      line-height: 23px;
+      letter-spacing: 1px;
+      padding: 10px 0 10px;
+      border-bottom: 3px dotted #555;
+      border-top: 3px dotted #555;
+    }
+
+    div.foo {
+      width: 90%;
+      margin: 0 auto;
+      text-align: center;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    .letter {
+      display: inline-block;
+      font-weight: 900;
+      font-size: 5em;
+      margin: 0.1em;
+      position: relative;
+      color: rgb(34, 122, 151);
+      transform-style: preserve-3d;
+      perspective: 400;
+      z-index: 1;
+    }
+
+    .letter:before,
+    .letter:after {
+      position: absolute;
+      content: attr(data-letter);
+      transform-origin: top left;
+      top: 0;
+      left: 0;
+    }
+
+    .letter,
+    .letter:before,
+    .letter:after {
+      transition: all 0.1s ease-in-out;
+    }
+
+    .letter:before {
+      color: #fff;
+      text-shadow:
+        -1px 0px 1px rgba(255, 255, 255, .8),
+        1px 0px 1px rgba(0, 0, 0, .8);
+      z-index: 3;
+      transform:
+        rotateX(0deg) rotateY(-15deg) rotateZ(0deg);
+    }
+
+    .letter:after {
+      color: rgba(0, 0, 0, .11);
+      z-index: 2;
+      transform:
+        scale(1.08, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 1deg);
+    }
+
+    .letter:hover:before {
+      color: #fafafa;
+      transform:
+        rotateX(0deg) rotateY(-60deg) rotateZ(0deg);
+    }
+
+    .letter:hover:after {
+      transform:
+        scale(1.08, 1) rotateX(0deg) rotateY(40deg) rotateZ(0deg) skew(0deg, 22deg);
+    }
+  </style>
 </head>
 
 <body style="overflow:hidden;">
-  <my-app>Loading...</my-app>
+  <my-app>
+    <center><img src="loading.gif" alt="Loading..." /><br />
+      <div class="foo"><span class="letter" data-letter="S">S</span><span class="letter" data-letter="G">G</span><span
+          class="letter" data-letter="R">R</span><span class="letter" data-letter="A">A</span><span class="letter"
+          data-letter="I">I</span></div>
+      
+      <h3>Raúl Correia | Rui Ribeiro | Mário Dias | Miguel Santos</h3>
+    </center>
+  </my-app>
 </body>
 
 </html>
