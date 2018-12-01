@@ -405,7 +405,7 @@ export class SceneComponent implements OnInit {
     var ambientLight = new THREE.AmbientLight(0x404040, 0.7);
     var directionalLight = new THREE.SpotLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
-    directionalLight.position.set(0, 25, 40);
+    directionalLight.position.set(0, 25, 100);
     directionalLight.target.position.set(0, -1, -1);
     directionalLight.shadow.bias = -0.001;
     directionalLight.shadowMapHeight = 2048;
