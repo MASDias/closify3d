@@ -6497,8 +6497,7 @@ class Armario extends three__WEBPACK_IMPORTED_MODULE_0__["Group"] {
         this.textureName = "WOOD1_TEXTURE";
         var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshPhysicalMaterial"]({
             map: new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]().load(_TextureManager__WEBPACK_IMPORTED_MODULE_4__["TextureManager"].getInstance().getFilePath(this.textureName)),
-            side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"],
-            specular: 0xffffff
+            side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
         });
         var floorCube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](floorGeometry, material);
         floorCube.position.y = -((altura - this.espessura) / 2);
@@ -7371,7 +7370,7 @@ var SceneComponent = /** @class */ (function () {
         //SceneComponent.raycaster = new THREE.Raycaster;
         SceneComponent_1.componentes = new Array();
         this.initCamera();
-        this.initStarfield();
+        this.initBackground();
         this.initFloor();
         this.initRenderer();
         this.initControlKit();
@@ -7416,7 +7415,7 @@ var SceneComponent = /** @class */ (function () {
         update(0, totalGameTime);
         updateColisions();
     };
-    SceneComponent.prototype.initStarfield = function () {
+    SceneComponent.prototype.initBackground = function () {
         var texture = new three__WEBPACK_IMPORTED_MODULE_3__["TextureLoader"]().load('assets/texture/sky_background.jpg', function (texture) {
             texture.wrapS = texture.wrapT = three__WEBPACK_IMPORTED_MODULE_3__["RepeatWrapping"];
             //texture.offset(0, 0);
@@ -7654,7 +7653,7 @@ var SceneComponent = /** @class */ (function () {
         SceneComponent_1.camera.lookAt(0, 0, 0);
     };
     SceneComponent.prototype.initOrthoCamera = function () {
-        SceneComponent_1.camera = new three__WEBPACK_IMPORTED_MODULE_3__["OrthographicCamera"](window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 1000);
+        SceneComponent_1.camera = new three__WEBPACK_IMPORTED_MODULE_3__["OrthographicCamera"](window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 0, 1000);
         this.controls = new three_orbitcontrols__WEBPACK_IMPORTED_MODULE_4__(SceneComponent_1.camera, this.renderer.domElement);
         SceneComponent_1.camera.add(this.listener);
         SceneComponent_1.camera.position.set(0, 20, 55);
