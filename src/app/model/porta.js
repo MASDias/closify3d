@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { TextureManager } from './TextureManager';
+import {
+    TextureManager
+} from './TextureManager';
 export class Porta extends THREE.Group {
 
     constructor(largura, altura) {
@@ -94,6 +96,10 @@ export class Porta extends THREE.Group {
     rotateAndChangeDirection() {
         this.rotateZ(Math.PI);
         this.direction *= -1;
+        if (this.direction < 0)
+            this.position.x -= this.largura;
+        else
+            this.position.x += this.largura;
     }
     loadTexture(textureName) {
         this.textureName = textureName;

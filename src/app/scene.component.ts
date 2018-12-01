@@ -79,8 +79,8 @@ export class SceneComponent implements OnInit {
     allfolders
   }
   private color: {
-    color0,
-    color1
+    texture_color,
+    light_color
   }
   constructor(private elRef: ElementRef, private config: ConfigService) {
     SceneComponent.instance = this;
@@ -197,8 +197,8 @@ export class SceneComponent implements OnInit {
       allfolders: []
     }
     this.color = {
-      color0: 0,
-      color1: 0,
+      texture_color: 0,
+      light_color: 0,
     }
     // var cam = this.datgui.addFolder('Camera');
     // var x = cam.add(SceneComponent.camera.position, 'x', -100, 100).listen();
@@ -230,10 +230,10 @@ export class SceneComponent implements OnInit {
     });
 
     var color = Math.random() * 0xffffff;
-    folder.addColor(this.color, 'color0', color).onChange(() => {
+    folder.addColor(this.color, 'texture_color', color).onChange(() => {
       objeto.children.forEach(element => {
         if (element.material != null)
-          element.material.color.setHex(this.dec2hex(this.color.color0));
+          element.material.color.setHex(this.dec2hex(this.color.texture_color));
       });
 
     });
@@ -241,8 +241,8 @@ export class SceneComponent implements OnInit {
       var color2 = Math.random() * 0xffffff;
 
     if (isLight) {
-      folder.addColor(this.color, 'color1', color2).onChange(() => {
-        objeto.light.color.setHex(this.dec2hex(this.color.color1));
+      folder.addColor(this.color, 'light_color', color2).onChange(() => {
+        objeto.light.color.setHex(this.dec2hex(this.color.light_color));
       });
     }
     if (isArmario == false) {
