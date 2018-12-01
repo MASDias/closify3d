@@ -33,10 +33,29 @@ export class Cabide extends THREE.Group {
 
         // adding to the group
         this.add(barra);
+        this.receiveShadow = true;
+        this.castShadow = true;
+        this.playAnimation = false;
+        this.reverseAnimation = false;
     }
 
     animate() {
+        this.playAnimation = true;
 
+    }
+
+    update(dt) {
+        var velocidade = 1;
+        var step = Math.PI / 2;
+        if (this.playAnimation) {
+            var inc = velocidade * step * dt;
+            this.rotation.y += inc;
+            if (this.rotation.y > Math.PI * 2) {
+                this.playAnimation = false;
+                this.rotation.y -= Math.PI * 2;
+
+            }
+        }
     }
 
 }

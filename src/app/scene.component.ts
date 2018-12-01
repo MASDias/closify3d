@@ -108,7 +108,7 @@ export class SceneComponent implements OnInit {
     SceneComponent.mouse = new THREE.Vector2();
     //SceneComponent.raycaster = new THREE.Raycaster;
     SceneComponent.componentes = new Array();
-    SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+    SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
 
     this.initStarfield();
@@ -216,18 +216,18 @@ export class SceneComponent implements OnInit {
     folder = this.datgui.addFolder(objeto.name + " " + this.datguiStructure.objectcounter++);
 
     this.datguiStructure.allfolders.push(folder);
-    var x = folder.add(objeto.position, 'x', -100, 100).step(0.5)
+    var x = folder.add(objeto.position, 'x', -30, 30).step(0.1)
       .listen()
     x.onChange((value) => {
       objeto.position.x = value;
       SceneComponent.hasChanged = true;
     });
-    var y = folder.add(objeto.position, 'y', -100, 100).listen().step(0.1);
+    var y = folder.add(objeto.position, 'y', -30, 30).step(0.1).listen();
     y.onChange((value) => {
       objeto.position.y = value;
       SceneComponent.hasChanged = true;
     });
-    var z = folder.add(objeto.position, 'z', -100, 100).listen().step(0.1);
+    var z = folder.add(objeto.position, 'z', -30, 30).step(0.1).listen();
     z.onChange((value) => {
       objeto.position.z = value;
       SceneComponent.hasChanged = true;
@@ -405,9 +405,11 @@ export class SceneComponent implements OnInit {
     var ambientLight = new THREE.AmbientLight(0x404040, 0.7);
     var directionalLight = new THREE.SpotLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
-    directionalLight.position.set(0, 25, 25);
+    directionalLight.position.set(0, 25, 40);
     directionalLight.target.position.set(0, -1, -1);
     directionalLight.shadow.bias = -0.001;
+    directionalLight.shadowMapHeight = 2048;
+    directionalLight.shadowMapWidth = 2048;
     this.scene.add(ambientLight);
     this.scene.add(directionalLight);
   }
