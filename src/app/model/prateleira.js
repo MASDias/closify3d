@@ -23,6 +23,7 @@ export class Prateleira extends THREE.Group {
 
         // adding to the group
         this.add(prateleira);
+        this.isWireFrame = false;
 
     }
 
@@ -78,6 +79,13 @@ export class Prateleira extends THREE.Group {
                 element.material.needsUpdate = true;
             }
         });
+    }
+    changeWireFrame() {
+        this.isWireFrame = !this.isWireFrame;
+        this.children.forEach(e => {
+            e.material.wireframe = this.isWireFrame;
+            e.material.needsUpdate = true;
+        })
     }
 
 }

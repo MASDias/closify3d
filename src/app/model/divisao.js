@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { TextureManager } from './TextureManager';
+import {
+    TextureManager
+} from './TextureManager';
 export class Divisao extends THREE.Group {
     constructor(altura, profundidade, invisivel) {
 
@@ -34,6 +36,7 @@ export class Divisao extends THREE.Group {
 
         // adding to the group
         this.add(divisao);
+        this.isWireFrame = false;
 
     }
 
@@ -50,5 +53,11 @@ export class Divisao extends THREE.Group {
             }
         });
     }
-
+    changeWireFrame() {
+        this.isWireFrame = !this.isWireFrame;
+        this.children.forEach(e => {
+            e.material.wireframe = this.isWireFrame;
+            e.material.needsUpdate = true;
+        })
+    }
 }

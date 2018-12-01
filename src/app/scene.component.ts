@@ -51,7 +51,7 @@ export class SceneComponent implements OnInit {
   private scene: THREE.Scene;
   private controls: OrbitControls;
   private datgui;
-  private objetoSelecionado;
+  public objetoSelecionado;
   private controlkit;
   private Armario;
   private stats;
@@ -317,6 +317,7 @@ export class SceneComponent implements OnInit {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
     document.addEventListener('mousedown', this.onMouseDown, false);
+    window.addEventListener('keydown', this.onDocumentKeyDown, false);
     this.renderer.gammaOutput = true;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.BasicShadowMap;
@@ -466,8 +467,8 @@ export class SceneComponent implements OnInit {
       }
 
     }
-    if (this.objetoSelecionado != null)
-      console.log(this.objetoSelecionado);
+    //if (this.objetoSelecionado != null)
+    //console.log(this.objetoSelecionado);
 
   }
 
@@ -485,6 +486,7 @@ export class SceneComponent implements OnInit {
   }
 
   createArmarioAddScene(armario) {
+    //console.log(armario);
     this.Armario = armario;
     this.scene.add(armario);
     this.initdatGuiObjeto(armario, true);
@@ -508,7 +510,22 @@ export class SceneComponent implements OnInit {
   onDocumentKeyDown(event) {
     var keycode = event.which;
     switch (keycode) {
-      case 68://CASE D)
+      case 68://CASE D Wireframe
+        {
+          //console.log("Pressed D");
+          //console.log(SceneComponent.instance.Armario);
+          if (SceneComponent.instance.Armario != null) SceneComponent.instance.Armario.changeWireFrame();
+        }
+        break;
+      case 27:
+        {
+          /*SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
+          SceneComponent.instance.objetoSelecionado.material.emissive.setHex(SceneComponent.instance.objetoSelecionado.currentHex);
+          SceneComponent.INTERSECTED = null;
+          SceneComponent.instance.objetoSelecionado = null;
+          */
+        }
+        break;
     }
   }
 }
@@ -534,10 +551,10 @@ function CollisionDetection() {
       var hits = caster.intersectObjects(elements, true);
       for (var k = 0; k < hits.length; k++) {
         if (hits[k].distance === 0) {
-          console.log("hit", hits[k]);
+          //console.log("hit", hits[k]);
           h = hits[k].object;
           var e = element.object;
-          console.log("elemento", element);
+          //console.log("elemento", element);
           h.material.emissive.setHex(0x0000ff);
         }
       }

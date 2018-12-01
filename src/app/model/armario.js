@@ -69,7 +69,7 @@ export class Armario extends THREE.Group {
         this.translateY(altura / 2);
         this.castShadow = true;
         this.receiveShadow = true;
-
+        this.isWireFrame = false;
 
     }
 
@@ -114,5 +114,17 @@ export class Armario extends THREE.Group {
                 element.material.needsUpdate = true;
             }
         });
+    }
+
+    changeWireFrame() {
+        this.isWireFrame = !this.isWireFrame;
+        this.children.forEach(e => {
+            //console.log(e);
+            if (e.changeWireFrame) e.changeWireFrame();
+            else {
+                e.material.wireframe = this.isWireFrame;
+                e.material.needsUpdate = true;
+            }
+        })
     }
 }

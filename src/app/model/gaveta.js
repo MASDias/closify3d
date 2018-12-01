@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { TextureManager } from './TextureManager';
+import {
+    TextureManager
+} from './TextureManager';
 export class Gaveta extends THREE.Group {
     constructor(largura, altura, profundidade) {
 
@@ -66,6 +68,7 @@ export class Gaveta extends THREE.Group {
             element.castShadow = true;
             element.receiveShadow = true;
         })
+        this.isWireFrame = false;
     }
 
     update(dt) {
@@ -121,5 +124,11 @@ export class Gaveta extends THREE.Group {
             }
         });
     }
-
+    changeWireFrame() {
+        this.isWireFrame = !this.isWireFrame;
+        this.children.forEach(e => {
+            e.material.wireframe = this.isWireFrame;
+            e.material.needsUpdate = true;
+        })
+    }
 }

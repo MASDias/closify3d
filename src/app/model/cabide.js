@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { TextureManager } from './TextureManager';
+import {
+    TextureManager
+} from './TextureManager';
 export class Cabide extends THREE.Group {
     constructor(comprimento) {
 
@@ -37,6 +39,7 @@ export class Cabide extends THREE.Group {
         this.castShadow = true;
         this.playAnimation = false;
         this.reverseAnimation = false;
+        this.isWireFrame = false;
     }
 
     animate() {
@@ -66,5 +69,11 @@ export class Cabide extends THREE.Group {
             }
         });
     }
-
+    changeWireFrame() {
+        this.isWireFrame = !this.isWireFrame;
+        this.children.forEach(e => {
+            e.material.wireframe = this.isWireFrame;
+            e.material.needsUpdate = true;
+        })
+    }
 }

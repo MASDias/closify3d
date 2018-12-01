@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { TextureManager } from './TextureManager';
+import {
+    TextureManager
+} from './TextureManager';
 export class FocoDeLuz extends THREE.Group {
     constructor(x, y, z) {
 
@@ -38,6 +40,7 @@ export class FocoDeLuz extends THREE.Group {
         this.add(FocoDeLuz.target);
 
         FocoDeLuz.shadow.bias = -0.001;
+        this.isWireFrame = false;
 
     }
     loadTexture(textureName) {
@@ -49,5 +52,11 @@ export class FocoDeLuz extends THREE.Group {
             }
         });
     }
-
+    changeWireFrame() {
+        this.isWireFrame = !this.isWireFrame;
+        this.children.forEach(e => {
+            e.material.wireframe = this.isWireFrame;
+            e.material.needsUpdate = true;
+        })
+    }
 }
