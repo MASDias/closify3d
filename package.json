@@ -25,6 +25,8 @@
     "stats.js": "^0.17.0",
     "three": "0.98.0",
     "three-orbitcontrols": "^2.96.3",
+    "three.cubemap-to-equirectangular": "^1.1.2",
+    "three.equirectangular-to-cubemap": "^1.1.0",
     "zone.js": "0.8.26"
   },
   "scripts": {

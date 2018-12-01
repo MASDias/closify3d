@@ -71,6 +71,7 @@ export class SceneComponent implements OnInit {
    */
   private listener = new THREE.AudioListener();
   private sound = new THREE.Audio(this.listener);
+  private whichCamera = 1;
 
   //datgui
   private datguiStructure: {
@@ -104,10 +105,9 @@ export class SceneComponent implements OnInit {
     SceneComponent.mouse = new THREE.Vector2();
     //SceneComponent.raycaster = new THREE.Raycaster;
     SceneComponent.componentes = new Array();
-    SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
 
-    this.initStarfield();
+    this.initCamera();
+    this.initBackground();
     this.initFloor();
     this.initRenderer();
     this.initControlKit();
@@ -115,7 +115,6 @@ export class SceneComponent implements OnInit {
     //this.initObjects();
     this.initLights();
     this.initMusic();
-    this.initCamera();
     const render = () => {
       this.stats.begin();
       this.controlkit.update();
@@ -160,7 +159,8 @@ export class SceneComponent implements OnInit {
     update(0, totalGameTime);
     updateColisions();
   }
-  initStarfield(): any {
+  initBackground(): any {
+
     var texture = new THREE.TextureLoader().load('assets/texture/sky_background.jpg', function (texture) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       //texture.offset(0, 0);
@@ -174,6 +174,7 @@ export class SceneComponent implements OnInit {
       })
     )
     this.scene.add(galaxy);
+
   }
   initMusic(): any {
     var audioLoader = new THREE.AudioLoader();
@@ -245,6 +246,17 @@ export class SceneComponent implements OnInit {
         objeto.light.color.setHex(this.dec2hex(this.color.light_color));
       });
     }
+    /*
+  Alterar textura
+*/
+
+    var structure_texture = {
+      Texture: objeto.textureName
+    };
+    folder.add(structure_texture, "Texture", TextureManager.getInstance().getTextures())
+      .onChange((value) => {
+        objeto.loadTexture(value);
+      })
     if (isArmario == false) {
       var structure = {
         remove:
@@ -283,17 +295,6 @@ export class SceneComponent implements OnInit {
       }
       folder.add(structure_2, "rotate");
     };
-    /*
-      Alterar textura
-    */
-
-    var structure_texture = {
-      Texture: objeto.textureName
-    };
-    folder.add(structure_texture, "Texture", TextureManager.getInstance().getTextures())
-      .onChange((value) => {
-        objeto.loadTexture(value);
-      })
 
   }
   initFloor(): void {
@@ -306,7 +307,7 @@ export class SceneComponent implements OnInit {
       new THREE.PlaneGeometry(200, 200, 200, 200),
       new THREE.MeshPhysicalMaterial({
         map: texture,
-        side: THREE.FrontSide
+        side: THREE.DoubleSide
       })
     );
     floor.rotation.x -= Math.PI / 2;
@@ -416,12 +417,22 @@ export class SceneComponent implements OnInit {
     directionalLight.position.set(0, 25, 25);
     directionalLight.target.position.set(0, -1, -1);
     directionalLight.shadow.bias = -0.001;
-    directionalLight.shadowMapHeight = 2048;
-    directionalLight.shadowMapWidth = 2048;
+    directionalLight.shadowMapHeight = 1024;
+    directionalLight.shadowMapWidth = 1024;
     this.scene.add(ambientLight);
     this.scene.add(directionalLight);
   }
   initCamera(): void {
+    SceneComponent.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
+    SceneComponent.camera.add(this.listener);
+    SceneComponent.camera.position.set(0, 20, 55);
+    SceneComponent.camera.lookAt(0, 0, 0);
+  }
+  initOrthoCamera(): void {
+    SceneComponent.camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2,
+      window.innerHeight / 2, window.innerHeight / -2, 0, 1000);
+    this.controls = new OrbitControls(SceneComponent.camera, this.renderer.domElement);
     SceneComponent.camera.add(this.listener);
     SceneComponent.camera.position.set(0, 20, 55);
     SceneComponent.camera.lookAt(0, 0, 0);
@@ -461,7 +472,7 @@ export class SceneComponent implements OnInit {
     } else {
       if (SceneComponent.INTERSECTED || this.objetoSelecionado) {
         SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
-        this.objetoSelecionado.material.emissive.setHex(this.objetoSelecionado.currentHex);
+        //this.objetoSelecionado.material.emissive.setHex(this.objetoSelecionado.currentHex);
         SceneComponent.INTERSECTED = null;
         this.objetoSelecionado = null;
       }
@@ -519,11 +530,25 @@ export class SceneComponent implements OnInit {
         break;
       case 27:
         {
-          /*SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
+          /*
+          SceneComponent.INTERSECTED.material.emissive.setHex(SceneComponent.INTERSECTED.currentHex);
           SceneComponent.instance.objetoSelecionado.material.emissive.setHex(SceneComponent.instance.objetoSelecionado.currentHex);
           SceneComponent.INTERSECTED = null;
           SceneComponent.instance.objetoSelecionado = null;
           */
+        }
+        break;
+      case 67:
+        {
+          if (SceneComponent.instance.whichCamera == 1) {
+            SceneComponent.instance.initOrthoCamera();
+            SceneComponent.instance.whichCamera = 2;
+          }
+          else {
+            SceneComponent.instance.initCamera();
+            SceneComponent.instance.whichCamera = 1;
+          }
+
         }
         break;
     }

@@ -28,8 +28,7 @@ export class Armario extends THREE.Group {
         this.textureName = "WOOD1_TEXTURE";
         var material = new THREE.MeshPhysicalMaterial({
             map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
-            side: THREE.DoubleSide,
-            specular: 0xffffff
+            side: THREE.DoubleSide
         });
         var floorCube = new THREE.Mesh(floorGeometry, material);
         floorCube.position.y = -((altura - this.espessura) / 2);
