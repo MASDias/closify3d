@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import { TextureManager } from './TextureManager';
 export class Porta extends THREE.Group {
 
     constructor(largura, altura) {
@@ -17,12 +17,12 @@ export class Porta extends THREE.Group {
         this.MAX_ROTATION = 110 * (Math.PI / 180);
         this.ROTATION_STEP = (Math.PI / 2.0) / 3;
         this.direction = 1;
-
+        this.textureName = "WOOD3_TEXTURE";
         // Front
         var frontGeometry = new THREE.BoxGeometry(largura, altura, this.espessura);
         //frontGeometry.translate(0, largura / 2, 0);
         var material = new THREE.MeshPhongMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
+            map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
             side: THREE.DoubleSide
         });
         var porta = new THREE.Mesh(frontGeometry, material);
@@ -94,5 +94,14 @@ export class Porta extends THREE.Group {
     rotateAndChangeDirection() {
         this.rotateZ(Math.PI);
         this.direction *= -1;
+    }
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 }

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { TextureManager } from './TextureManager';
 export class Divisao extends THREE.Group {
     constructor(altura, profundidade, invisivel) {
 
@@ -38,6 +39,16 @@ export class Divisao extends THREE.Group {
 
     animate() {
 
+    }
+
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 
 }

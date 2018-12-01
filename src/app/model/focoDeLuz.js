@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { TextureManager } from './TextureManager';
 export class FocoDeLuz extends THREE.Group {
     constructor(x, y, z) {
 
@@ -6,8 +7,9 @@ export class FocoDeLuz extends THREE.Group {
         this.isLight = true;
         this.espessura = 0.5;
         this.name = "Foco de Luz";
+        this.textureName = "WOOD3_TEXTURE";
         var material = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
+            map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
             emissive: 0xffffff,
             side: THREE.DoubleSide
         });
@@ -37,6 +39,15 @@ export class FocoDeLuz extends THREE.Group {
 
         FocoDeLuz.shadow.bias = -0.001;
 
+    }
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 
 }

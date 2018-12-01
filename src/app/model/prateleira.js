@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import {
+    TextureManager
+} from './TextureManager';
 export class Prateleira extends THREE.Group {
     constructor(largura, profundidade) {
 
@@ -6,11 +9,12 @@ export class Prateleira extends THREE.Group {
         this.name = "Prateleira"
         this.espessura = 1;
         this.profundidade = profundidade;
+        this.textureName = "WOOD3_TEXTURE";
 
         // Prateleira
         var frontGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
         var frontMaterial = new THREE.MeshPhongMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
+            map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
             side: THREE.DoubleSide
         });
         var prateleira = new THREE.Mesh(frontGeometry, frontMaterial);
@@ -65,6 +69,15 @@ export class Prateleira extends THREE.Group {
             });
         }
 
+    }
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 
 }

@@ -1,16 +1,16 @@
 import * as THREE from 'three';
-
+import { TextureManager } from './TextureManager';
 export class Cabide extends THREE.Group {
     constructor(comprimento) {
 
         super();
         this.name = "Cabide";
         this.espessura = 1;
-
+        this.textureName = "WOOD3_TEXTURE";
         // Pega1
         var pegaGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5, 30);
         var pegaMaterial = new THREE.MeshPhongMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood3.jpg'),
+            map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
             side: THREE.DoubleSide
         });
         var pegaCylinder = new THREE.Mesh(pegaGeometry, pegaMaterial);
@@ -56,6 +56,15 @@ export class Cabide extends THREE.Group {
 
             }
         }
+    }
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 
 }

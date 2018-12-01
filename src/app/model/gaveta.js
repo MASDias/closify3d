@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { TextureManager } from './TextureManager';
 export class Gaveta extends THREE.Group {
     constructor(largura, altura, profundidade) {
 
@@ -12,9 +13,9 @@ export class Gaveta extends THREE.Group {
         this.reverseAnimation = false;
 
         this.espessura = 1;
-
+        this.textureName = "WOOD4_TEXTURE";
         var material = new THREE.MeshPhongMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood4.jpg'),
+            map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
             side: THREE.DoubleSide
         });
 
@@ -110,6 +111,15 @@ export class Gaveta extends THREE.Group {
             });
         }
 
+    }
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 
 }

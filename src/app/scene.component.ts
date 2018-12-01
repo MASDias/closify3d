@@ -15,7 +15,8 @@ import { Prateleira } from './model/prateleira';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { Scene } from 'three';
 import { Variable } from '@angular/compiler/src/render3/r3_ast';
-import { SoundManager } from './model/SoundManager'
+import { SoundManager } from './model/SoundManager';
+import { TextureManager } from './model/TextureManager';
 interface Rotation {
   x: number;
   y: number;
@@ -49,25 +50,20 @@ export class SceneComponent implements OnInit {
   static camera: THREE.Camera;
   private scene: THREE.Scene;
   private controls: OrbitControls;
+  private datgui;
+  private objetoSelecionado;
+  private controlkit;
+  private Armario;
+  private stats;
   //static raycaster: THREE.Raycaster;
   static mouse: THREE.Vector2;
   static sceneRaycaster: THREE.Scene;
   static INTERSECTED;
   static componentes;
-
   static instance;
-
   static hasChanged;
-
   static collisions = new CollisionDetection();
 
-  private datgui;
-  private objetoSelecionado;
-  private controlkit;
-
-  private Armario;
-
-  private stats;
 
   /**
    * Background Sound
@@ -287,6 +283,17 @@ export class SceneComponent implements OnInit {
       }
       folder.add(structure_2, "rotate");
     };
+    /*
+      Alterar textura
+    */
+
+    var structure_texture = {
+      Texture: objeto.textureName
+    };
+    folder.add(structure_texture, "Texture", TextureManager.getInstance().getTextures())
+      .onChange((value) => {
+        objeto.loadTexture(value);
+      })
 
   }
   initFloor(): void {
@@ -405,7 +412,7 @@ export class SceneComponent implements OnInit {
     var ambientLight = new THREE.AmbientLight(0x404040, 0.7);
     var directionalLight = new THREE.SpotLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
-    directionalLight.position.set(0, 25, 100);
+    directionalLight.position.set(0, 25, 25);
     directionalLight.target.position.set(0, -1, -1);
     directionalLight.shadow.bias = -0.001;
     directionalLight.shadowMapHeight = 2048;

@@ -9,6 +9,10 @@ import {
     SoundManager
 } from './SoundManager';
 
+import {
+    TextureManager
+} from './TextureManager';
+
 export class Armario extends THREE.Group {
 
     constructor(largura, altura, profundidade) {
@@ -21,9 +25,9 @@ export class Armario extends THREE.Group {
         this.espessura = 1;
         // Floor
         var floorGeometry = new THREE.BoxGeometry(largura, this.espessura, profundidade);
-
+        this.textureName = "WOOD1_TEXTURE";
         var material = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load('assets/texture/wood.png'),
+            map: new THREE.TextureLoader().load(TextureManager.getInstance().getFilePath(this.textureName)),
             side: THREE.DoubleSide,
             specular: 0xffffff
         });
@@ -66,6 +70,7 @@ export class Armario extends THREE.Group {
         this.castShadow = true;
         this.receiveShadow = true;
 
+
     }
 
     animate() {
@@ -88,8 +93,8 @@ export class Armario extends THREE.Group {
         if (componente instanceof Gaveta) {
             if (componente.altura > this.altura - 2 * this.espessura) added = false;
             else if (componente.profundidade >= this.profundidade - this.espessura) added = false;
-            
-                componente.translateY((componente.altura/2));
+
+            componente.translateY((componente.altura / 2));
         }
 
         if (added === false) {
@@ -99,5 +104,15 @@ export class Armario extends THREE.Group {
             SoundManager.getInstance().playSound("HAMMER");
         }
         return added;
+    }
+
+    loadTexture(textureName) {
+        this.textureName = textureName;
+        this.children.forEach(element => {
+            if (element.isMesh) {
+                element.material.map = TextureManager.getInstance().loadTexture(textureName);
+                element.material.needsUpdate = true;
+            }
+        });
     }
 }
